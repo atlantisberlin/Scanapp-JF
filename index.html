@@ -429,7 +429,8 @@
     <button class="location-save" onclick="saveLocation()">Bestätigen</button>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.2/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.9.15/dist/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill@0.9.21/dist/index.js"></script>
 <script>
 const SHEET_ID='1qu5AvF6iWvPISBCpYUtiSjdTEqXlQrO0Qtm5-jTVZLE';
 const SHEET_URL=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
@@ -792,10 +793,9 @@ async function startScanner(){
     }
 
     // Strategy 2: ZXing
-    if(typeof ZXing!=='undefined'){
-      document.getElementById('scanner-engine').textContent='ZXing';
-      scanWithZXing(video);return;
-    }
+    // Use ZBar WASM (polyfill or native BarcodeDetector)
+    document.getElementById('scanner-engine').textContent='ZBar';
+    scanWithZBar(video);return;
 
     showError('Scanner-Bibliothek nicht geladen. Seite neu laden.');
     stopScanner();
@@ -840,27 +840,36 @@ function scanWithDetector(video,detector){
   scanAnimFrame=requestAnimationFrame(tick);
 }
 
-function scanWithZXing(video){
-  const hints=new Map();
-  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[
-    ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,
-    ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,
-    ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E
-  ]);
-  hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
-  try{
-    const reader=new ZXing.BrowserMultiFormatReader(hints,{delayBetweenScanAttempts:80});
-    window._zxingReader=reader;
-    reader.decodeFromVideoElement(video,(result,err)=>{
-      if(result&&scanActive){
-        scanActive=false;
-        flashFeedback();
-        const code=result.getText();
-        stopScanner();
-        handleScanResult(code);
-      }
-    });
-  }catch(e){showError('ZXing Fehler: '+e);stopScanner();}
+async function scanWithZBar(video){
+  const det=await initBarcodeDetector();
+  if(!det){showError('Scanner nicht verfügbar.');stopScanner();return;}
+  const canvas=document.createElement('canvas');
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  let lastScan=0;
+  async function tick(){
+    if(!scanActive)return;
+    const now=performance.now();
+    if(now-lastScan>100&&video.readyState>=2){
+      lastScan=now;
+      canvas.width=video.videoWidth;
+      canvas.height=video.videoHeight;
+      ctx.drawImage(video,0,0);
+      try{
+        const bmp=await createImageBitmap(canvas);
+        const codes=await det.detect(bmp);
+        bmp.close();
+        if(codes&&codes.length>0&&scanActive){
+          scanActive=false;
+          flashFeedback();
+          stopScanner();
+          handleScanResult(codes[0].rawValue);
+          return;
+        }
+      }catch(e){}
+    }
+    scanAnimFrame=requestAnimationFrame(tick);
+  }
+  scanAnimFrame=requestAnimationFrame(tick);
 }
 
 function flashFeedback(){
@@ -913,8 +922,27 @@ async function handleCameraCapture(input){
   }
 }
 
+// Initialize BarcodeDetector with ZBar polyfill if native not available
+let barcodeDetector=null;
+async function initBarcodeDetector(){
+  if(barcodeDetector)return barcodeDetector;
+  const formats=['ean_13','ean_8','code_128','code_39','upc_a','upc_e'];
+  if('BarcodeDetector' in window){
+    try{
+      barcodeDetector=new BarcodeDetector({formats});
+      return barcodeDetector;
+    }catch(e){}
+  }
+  // Use ZBar WASM polyfill
+  if(typeof BarcodeDetectorPolyfill!=='undefined'){
+    await BarcodeDetectorPolyfill.init();
+    barcodeDetector=new BarcodeDetectorPolyfill({formats});
+    return barcodeDetector;
+  }
+  return null;
+}
+
 async function decodeFromImage(file){
-  // Load image into canvas for processing
   const img=await loadImage(file);
   const result=await tryAllStrategies(img);
   return result;
@@ -958,33 +986,23 @@ function prepareCanvas(img,scale=1,contrast=1,rotation=0){
 }
 
 async function decodeCanvas(canvas){
-  if(typeof ZXing==='undefined')return null;
-  const hints=new Map();
-  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[
-    ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,
-    ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,
-    ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E
-  ]);
-  hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+  const det=await initBarcodeDetector();
+  if(!det)return null;
   try{
-    const ctx=canvas.getContext('2d');
-    const id=ctx.getImageData(0,0,canvas.width,canvas.height);
-    const reader=new ZXing.BrowserMultiFormatReader(hints);
-    const lum=new ZXing.RGBLuminanceSource(id.data,canvas.width,canvas.height);
-    const bin=new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(lum));
-    return reader.decode(bin).getText();
-  }catch(e){return null;}
+    const bmp=await createImageBitmap(canvas);
+    const codes=await det.detect(bmp);
+    bmp.close();
+    if(codes&&codes.length>0)return codes[0].rawValue;
+  }catch(e){}
+  return null;
 }
 
 async function detectFromBitmap(bitmap){
-  if(!('BarcodeDetector' in window))return null;
+  const det=await initBarcodeDetector();
+  if(!det)return null;
   try{
-    const fmts=['ean_13','ean_8','code_128','code_39','upc_a','upc_e'];
-    const supported=await BarcodeDetector.getSupportedFormats().catch(()=>fmts);
-    const avail=fmts.filter(f=>supported.includes(f));
-    const det=new BarcodeDetector({formats:avail.length?avail:fmts});
     const codes=await det.detect(bitmap);
-    return codes.length>0?codes[0].rawValue:null;
+    return codes&&codes.length>0?codes[0].rawValue:null;
   }catch(e){return null;}
 }
 
@@ -1240,6 +1258,7 @@ function switchTab(tab){
 
 loadData();
 initLocation();
+initBarcodeDetector().then(d=>console.log('BarcodeDetector ready:',d?'yes':'no'));
 </script>
 </body>
 </html>
