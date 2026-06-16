@@ -403,7 +403,6 @@
     <button class="location-save" onclick="saveLocation()">Bestätigen</button>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.2/umd/index.min.js"></script>
 <script>
 const SHEET_ID='1qu5AvF6iWvPISBCpYUtiSjdTEqXlQrO0Qtm5-jTVZLE';
@@ -728,44 +727,60 @@ async function startScanner(){
   document.body.style.overflow='hidden';
 
   try{
-    // Request high-res rear camera
-    const stream=await navigator.mediaDevices.getUserMedia({video:{
+    const constraints={video:{
       facingMode:{ideal:'environment'},
-      width:{ideal:1920,min:1280},
-      height:{ideal:1080,min:720},
-      focusMode:'continuous'
-    }});
+      width:{ideal:1920},height:{ideal:1080}
+    }};
+    const stream=await navigator.mediaDevices.getUserMedia(constraints);
     video.srcObject=stream;
     await video.play();
     torchTrack=stream.getVideoTracks()[0];
 
-    // Try native BarcodeDetector first (fastest, best on iOS/Android)
+    // Try to enable autofocus / continuous focus
+    try{await torchTrack.applyConstraints({advanced:[{focusMode:'continuous'}]});}catch(e){}
+
+    // Strategy 1: native BarcodeDetector (Chrome Android, some Safari)
     if('BarcodeDetector' in window){
-      const detector=new BarcodeDetector({
-        formats:['ean_13','ean_8','code_128','code_39','upc_a','upc_e','itf','codabar']
-      });
-      scanWithDetector(video,detector);
-    } else if(typeof ZXing!=='undefined'){
-      scanWithZXing(video);
-    } else {
-      startHtml5Scanner();
+      try{
+        const supported=await BarcodeDetector.getSupportedFormats();
+        const fmts=['ean_13','ean_8','code_128','code_39','upc_a','upc_e'];
+        const available=fmts.filter(f=>supported.includes(f));
+        if(available.length>0){
+          const detector=new BarcodeDetector({formats:available.length>0?available:fmts});
+          scanWithDetector(video,detector);
+          return;
+        }
+      }catch(e){}
     }
+
+    // Strategy 2: ZXing
+    if(typeof ZXing!=='undefined'){
+      scanWithZXing(video);return;
+    }
+
+    showError('Scanner-Bibliothek nicht geladen. Seite neu laden.');
+    stopScanner();
   }catch(e){
     stopScanner();
     const msg=String(e);
-    if(msg.includes('NotAllowed')||msg.includes('Permission'))
-      showError('Kamera-Zugriff verweigert. Bitte in den Browser-Einstellungen erlauben.');
-    else if(msg.includes('NotFound'))showError('Keine Kamera gefunden.');
-    else startHtml5Scanner();
+    if(msg.includes('NotAllowed')||msg.includes('PermissionDenied'))
+      showError('Kamera-Zugriff verweigert. Bitte in Safari: Einstellungen → Datenschutz → Kamera → erlauben.');
+    else if(msg.includes('NotFound')||msg.includes('DevicesNotFound'))
+      showError('Keine Kamera gefunden.');
+    else
+      showError('Kamera Fehler: '+msg.slice(0,60));
   }
 }
 
 function scanWithDetector(video,detector){
   const canvas=document.createElement('canvas');
-  const ctx=canvas.getContext('2d');
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  let lastScan=0;
   async function tick(){
     if(!scanActive)return;
-    if(video.readyState===video.HAVE_ENOUGH_DATA){
+    const now=performance.now();
+    if(now-lastScan>80&&video.readyState>=2){  // ~12fps scan rate
+      lastScan=now;
       canvas.width=video.videoWidth;
       canvas.height=video.videoHeight;
       ctx.drawImage(video,0,0);
@@ -774,8 +789,9 @@ function scanWithDetector(video,detector){
         if(codes.length>0&&scanActive){
           scanActive=false;
           flashFeedback();
+          const code=codes.find(c=>c.rawValue)||codes[0];
           stopScanner();
-          handleScanResult(codes[0].rawValue);
+          handleScanResult(code.rawValue);
           return;
         }
       }catch(e){}
@@ -793,34 +809,19 @@ function scanWithZXing(video){
     ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E
   ]);
   hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
-  const reader=new ZXing.BrowserMultiFormatReader(hints);
-  window._zxingReader=reader;
-  reader.decodeFromVideoElement(video,(result,err)=>{
-    if(result&&scanActive){
-      scanActive=false;
-      flashFeedback();
-      stopScanner();
-      handleScanResult(result.getText());
-    }
-  });
-}
-
-async function startHtml5Scanner(){
-  if(typeof Html5Qrcode==='undefined'){showError('Scanner nicht verfügbar.');stopScanner();return;}
   try{
-    html5QrCode=new Html5Qrcode('qr-reader');
-    const vw=Math.min(window.innerWidth*0.8,320);
-    await html5QrCode.start({facingMode:'environment'},
-      {fps:25,qrbox:{width:vw,height:Math.round(vw*0.5)},
-       formatsToSupport:[
-         Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,
-         Html5QrcodeSupportedFormats.CODE_128,Html5QrcodeSupportedFormats.CODE_39,
-         Html5QrcodeSupportedFormats.UPC_A,Html5QrcodeSupportedFormats.UPC_E
-       ]},
-      (code)=>{
-        if(!scanActive)return;scanActive=false;flashFeedback();stopScanner();handleScanResult(code);
-      },()=>{});
-  }catch(e){stopScanner();showError('Kamera konnte nicht gestartet werden.');}
+    const reader=new ZXing.BrowserMultiFormatReader(hints,{delayBetweenScanAttempts:80});
+    window._zxingReader=reader;
+    reader.decodeFromVideoElement(video,(result,err)=>{
+      if(result&&scanActive){
+        scanActive=false;
+        flashFeedback();
+        const code=result.getText();
+        stopScanner();
+        handleScanResult(code);
+      }
+    });
+  }catch(e){showError('ZXing Fehler: '+e);stopScanner();}
 }
 
 function flashFeedback(){
@@ -833,9 +834,22 @@ function flashFeedback(){
   if(navigator.vibrate)navigator.vibrate(100);
 }
 
-function handleScanResult(code){
+function handleScanResult(rawCode){
+  let code=rawCode.trim();
+  // UPC-A (12 digits) → try both with and without leading zero
+  // EAN-13 starting with 0 may be returned as 12-digit UPC-A
+  let item=findArticle(code);
+  if(!item && code.length===12){
+    // Try with leading zero (UPC-A → EAN-13)
+    item=findArticle('0'+code);
+    if(item)code='0'+code;
+  }
+  if(!item && code.length===13 && code.startsWith('0')){
+    // Try without leading zero
+    item=findArticle(code.slice(1));
+    if(item)code=code.slice(1);
+  }
   document.getElementById('search-input').value=code;
-  const item=findArticle(code);
   if(item)renderResult(item);
   else showError('EAN '+code+' nicht in der Datenbank gefunden.');
 }
