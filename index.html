@@ -53,12 +53,32 @@
     .search-row input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,0.12);}
     .search-row button{padding:10px 16px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);font-size:14px;cursor:pointer;color:var(--text);white-space:nowrap;font-weight:500;transition:background 0.1s;}
     .search-row button:active{background:var(--bg3);}
-    #video-wrapper{display:none;position:relative;border-radius:var(--radius);overflow:hidden;margin-bottom:12px;background:#000;}
-    #qr-reader{width:100%;}
-    #qr-reader video{width:100% !important;border-radius:var(--radius);}
-    #qr-reader__scan_region{border-radius:var(--radius);}
-    #qr-reader__dashboard{display:none !important;}
-    .close-scan{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;pointer-events:all;z-index:10;}
+    /* Fullscreen scanner overlay */
+    #scanner-overlay{display:none;position:fixed;inset:0;z-index:200;background:#000;flex-direction:column;}
+    #scanner-overlay.active{display:flex;}
+    #scanner-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+    .scanner-ui{position:relative;z-index:10;display:flex;flex-direction:column;height:100%;pointer-events:none;}
+    .scanner-top{display:flex;justify-content:space-between;align-items:center;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent);}
+    .scanner-title{color:#fff;font-size:16px;font-weight:600;}
+    .scanner-close-btn{width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;pointer-events:all;}
+    .scanner-frame-area{flex:1;display:flex;align-items:center;justify-content:center;}
+    .scanner-frame{width:75vw;max-width:300px;height:180px;position:relative;}
+    .scanner-frame::before,.scanner-frame::after{content:'';position:absolute;width:28px;height:28px;border-color:#fff;border-style:solid;border-radius:3px;}
+    .scanner-frame::before{top:0;left:0;border-width:3px 0 0 3px;}
+    .scanner-frame::after{top:0;right:0;border-width:3px 3px 0 0;}
+    .scanner-frame-bl,.scanner-frame-br{position:absolute;width:28px;height:28px;border-color:#fff;border-style:solid;border-radius:3px;bottom:0;}
+    .scanner-frame-bl{left:0;border-width:0 0 3px 3px;}
+    .scanner-frame-br{right:0;border-width:0 3px 3px 0;}
+    .scanner-line{position:absolute;left:4px;right:4px;top:50%;height:2px;background:rgba(255,80,80,0.85);border-radius:1px;animation:scanline 2s ease-in-out infinite;}
+    @keyframes scanline{0%,100%{top:10%;}50%{top:90%;}}
+    .scanner-hint{color:rgba(255,255,255,0.8);font-size:13px;text-align:center;margin-top:16px;}
+    .scanner-bottom{padding:24px 20px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);display:flex;justify-content:center;gap:32px;}
+    .scanner-action-btn{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;color:#fff;cursor:pointer;pointer-events:all;}
+    .scanner-action-btn .btn-circle{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;font-size:22px;}
+    .scanner-action-btn span{font-size:11px;opacity:0.85;}
+    .scanner-action-btn.torch-on .btn-circle{background:rgba(255,220,0,0.3);border-color:rgba(255,220,0,0.8);}
+    .scanner-result-flash{position:absolute;inset:0;background:rgba(255,255,255,0.4);z-index:20;animation:flash 0.3s ease-out forwards;pointer-events:none;}
+    @keyframes flash{0%{opacity:1;}100%{opacity:0;}}
     .article-top-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;}
     .article-img-col{flex-shrink:0;width:110px;height:110px;border-radius:var(--radius);overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center;}
     .article-img-col img{width:100%;height:100%;object-fit:contain;padding:6px;display:block;}
@@ -246,10 +266,6 @@
   <!-- Scan pane (default) -->
   <div class="tab-pane active" id="pane-scan">
     <div class="scan-section">
-      <div id="video-wrapper">
-        <div id="qr-reader"></div>
-        <button class="close-scan" onclick="stopScanner()"><i class="ti ti-x"></i></button>
-      </div>
       <button class="scan-btn" id="scan-btn" onclick="startScanner()">
         <i class="ti ti-camera"></i> Barcode scannen
       </button>
@@ -330,6 +346,39 @@
     </button>
   </nav>
 </div>
+
+<!-- Fullscreen Scanner Overlay -->
+<div id="scanner-overlay">
+  <video id="scanner-video" autoplay playsinline muted></video>
+  <div class="scanner-ui">
+    <div class="scanner-top">
+      <span class="scanner-title">Barcode scannen</span>
+      <button class="scanner-close-btn" onclick="stopScanner()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="scanner-frame-area">
+      <div>
+        <div class="scanner-frame">
+          <div class="scanner-frame-bl"></div>
+          <div class="scanner-frame-br"></div>
+          <div class="scanner-line"></div>
+        </div>
+        <div class="scanner-hint">Barcode in den Rahmen halten</div>
+      </div>
+    </div>
+    <div class="scanner-bottom">
+      <button class="scanner-action-btn" id="torch-btn" onclick="toggleTorch(this)">
+        <div class="btn-circle"><i class="ti ti-bulb"></i></div>
+        <span>Licht</span>
+      </button>
+      <button class="scanner-action-btn" onclick="stopScanner()">
+        <div class="btn-circle"><i class="ti ti-x"></i></div>
+        <span>Abbrechen</span>
+      </button>
+    </div>
+  </div>
+  <div id="qr-reader" style="display:none"></div>
+</div>
+
 <div class="aktionen-modal hidden" id="aktionen-modal">
   <div class="aktionen-sheet">
     <div class="aktionen-sheet-header">
@@ -355,6 +404,7 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.2/umd/index.min.js"></script>
 <script>
 const SHEET_ID='1qu5AvF6iWvPISBCpYUtiSjdTEqXlQrO0Qtm5-jTVZLE';
 const SHEET_URL=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
@@ -664,37 +714,115 @@ function onInput(val){
   else if(results.length>1&&results.length<=50)renderList(results,q);
 }
 
+let torchTrack=null;
+
 async function startScanner(){
-  if(location.protocol!=='https:'&&location.hostname!=='localhost'){showError('Kamera benötigt HTTPS.');return;}
-  if(typeof Html5Qrcode==='undefined'){showError('Scanner-Bibliothek nicht geladen.');return;}
-  document.getElementById('video-wrapper').style.display='block';
-  document.getElementById('scan-btn').style.display='none';
+  if(location.protocol!=='https:'&&location.hostname!=='localhost'){
+    showError('Kamera benötigt HTTPS — bitte über scanner.atlantis-berlin.de öffnen.');return;
+  }
   scanActive=true;
+  const overlay=document.getElementById('scanner-overlay');
+  const video=document.getElementById('scanner-video');
+  overlay.classList.add('active');
+  // Lock scroll
+  document.body.style.overflow='hidden';
   try{
-    html5QrCode=new Html5Qrcode('qr-reader');
-    await html5QrCode.start({facingMode:'environment'},
-      {fps:15,qrbox:{width:280,height:140},aspectRatio:1.7,
-       formatsToSupport:[Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,Html5QrcodeSupportedFormats.CODE_128,Html5QrcodeSupportedFormats.CODE_39,Html5QrcodeSupportedFormats.UPC_A,Html5QrcodeSupportedFormats.UPC_E]},
-      (decodedText)=>{
-        if(!scanActive)return;scanActive=false;stopScanner();
-        document.getElementById('search-input').value=decodedText;
-        const item=findArticle(decodedText);
-        if(item)renderResult(item);else showError('EAN '+decodedText+' nicht gefunden.');
-      },()=>{});
+    const stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}}
+    });
+    video.srcObject=stream;
+    await video.play();
+    // Store track for torch
+    torchTrack=stream.getVideoTracks()[0];
+    // Start ZXing on the video element
+    if(typeof ZXing==='undefined'){
+      // Fallback: use html5-qrcode if ZXing not available
+      startHtml5Scanner();return;
+    }
+    const codeReader=new ZXing.BrowserMultiFormatReader();
+    window._zxingReader=codeReader;
+    const hints=new Map();
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[
+      ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,
+      ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,
+      ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E
+    ]);
+    hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+    codeReader.hints=hints;
+    codeReader.decodeFromVideoElement(video,(result,err)=>{
+      if(result&&scanActive){
+        scanActive=false;
+        // Flash feedback
+        const flash=document.createElement('div');
+        flash.className='scanner-result-flash';
+        document.getElementById('scanner-overlay').appendChild(flash);
+        setTimeout(()=>flash.remove(),300);
+        const code=result.getText();
+        stopScanner();
+        handleScanResult(code);
+      }
+    });
   }catch(e){
     stopScanner();
     const msg=String(e);
-    if(msg.includes('NotAllowed')||msg.includes('Permission'))showError('Kamera-Zugriff verweigert.');
+    if(msg.includes('NotAllowed')||msg.includes('Permission'))
+      showError('Kamera-Zugriff verweigert. Bitte in den Browser-Einstellungen erlauben.');
     else if(msg.includes('NotFound'))showError('Keine Kamera gefunden.');
-    else showError('Kamera konnte nicht gestartet werden.');
+    else startHtml5Scanner();
   }
+}
+
+async function startHtml5Scanner(){
+  // Fallback to html5-qrcode fullscreen
+  if(typeof Html5Qrcode==='undefined'){showError('Scanner nicht verfügbar.');stopScanner();return;}
+  try{
+    html5QrCode=new Html5Qrcode('qr-reader');
+    const vw=Math.min(window.innerWidth*0.75,300);
+    await html5QrCode.start({facingMode:'environment'},
+      {fps:20,qrbox:{width:vw,height:Math.round(vw*0.6)},
+       formatsToSupport:[Html5QrcodeSupportedFormats.EAN_13,Html5QrcodeSupportedFormats.EAN_8,
+         Html5QrcodeSupportedFormats.CODE_128,Html5QrcodeSupportedFormats.CODE_39]},
+      (code)=>{
+        if(!scanActive)return;scanActive=false;stopScanner();handleScanResult(code);
+      },()=>{});
+  }catch(e){stopScanner();showError('Kamera konnte nicht gestartet werden.');}
+}
+
+function handleScanResult(code){
+  document.getElementById('search-input').value=code;
+  const item=findArticle(code);
+  if(item)renderResult(item);
+  else showError('EAN '+code+' nicht in der Datenbank gefunden.');
 }
 
 async function stopScanner(){
   scanActive=false;
+  document.body.style.overflow='';
+  // Stop ZXing
+  if(window._zxingReader){try{window._zxingReader.reset();}catch(e){}window._zxingReader=null;}
+  // Stop html5-qrcode
   if(html5QrCode){try{if(html5QrCode.isScanning)await html5QrCode.stop();html5QrCode.clear();}catch(e){}html5QrCode=null;}
-  document.getElementById('video-wrapper').style.display='none';
-  document.getElementById('scan-btn').style.display='flex';
+  // Stop camera stream
+  const video=document.getElementById('scanner-video');
+  if(video&&video.srcObject){video.srcObject.getTracks().forEach(t=>t.stop());video.srcObject=null;}
+  torchTrack=null;
+  document.getElementById('scanner-overlay').classList.remove('active');
+  // Reset torch button
+  const tb=document.getElementById('torch-btn');
+  if(tb)tb.classList.remove('torch-on');
+}
+
+async function toggleTorch(btn){
+  if(!torchTrack)return;
+  const isTorchOn=btn.classList.contains('torch-on');
+  try{
+    await torchTrack.applyConstraints({advanced:[{torch:!isTorchOn}]});
+    btn.classList.toggle('torch-on');
+  }catch(e){
+    // Torch not supported on this device
+    btn.style.opacity='0.4';
+    btn.disabled=true;
+  }
 }
 
 function copyArticleNr(nr,btn){
