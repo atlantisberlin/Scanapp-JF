@@ -363,6 +363,7 @@
           <div class="scanner-line"></div>
         </div>
         <div class="scanner-hint">Barcode in den Rahmen halten</div>
+        <div id="scanner-engine" style="color:rgba(255,255,255,0.4);font-size:10px;text-align:center;margin-top:6px"></div>
       </div>
     </div>
     <div class="scanner-bottom">
@@ -727,17 +728,28 @@ async function startScanner(){
   document.body.style.overflow='hidden';
 
   try{
-    const constraints={video:{
-      facingMode:{ideal:'environment'},
-      width:{ideal:1920},height:{ideal:1080}
-    }};
-    const stream=await navigator.mediaDevices.getUserMedia(constraints);
+    // iOS Safari needs specific constraints - avoid overly strict ones
+    let stream;
+    try{
+      // First try: ideal rear cam with good resolution
+      stream=await navigator.mediaDevices.getUserMedia({video:{
+        facingMode:{ideal:'environment'},
+        width:{ideal:1280},height:{ideal:720}
+      }});
+    }catch(e){
+      // Fallback: just rear camera, no resolution constraint
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    }
     video.srcObject=stream;
     await video.play();
     torchTrack=stream.getVideoTracks()[0];
 
-    // Try to enable autofocus / continuous focus
-    try{await torchTrack.applyConstraints({advanced:[{focusMode:'continuous'}]});}catch(e){}
+    // Log actual camera capabilities for debugging
+    const settings=torchTrack.getSettings();
+    console.log('Camera:',settings.width+'x'+settings.height,'facing:',settings.facingMode);
+
+    // Try continuous autofocus (works on Android, silently fails on iOS)
+    try{await torchTrack.applyConstraints({advanced:[{focusMode:'continuous'},{exposureMode:'continuous'}]});}catch(e){}
 
     // Strategy 1: native BarcodeDetector (Chrome Android, some Safari)
     if('BarcodeDetector' in window){
@@ -747,7 +759,8 @@ async function startScanner(){
         const available=fmts.filter(f=>supported.includes(f));
         if(available.length>0){
           const detector=new BarcodeDetector({formats:available.length>0?available:fmts});
-          scanWithDetector(video,detector);
+          document.getElementById('scanner-engine').textContent='BarcodeDetector';
+      scanWithDetector(video,detector);
           return;
         }
       }catch(e){}
@@ -755,6 +768,7 @@ async function startScanner(){
 
     // Strategy 2: ZXing
     if(typeof ZXing!=='undefined'){
+      document.getElementById('scanner-engine').textContent='ZXing';
       scanWithZXing(video);return;
     }
 
