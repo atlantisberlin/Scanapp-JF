@@ -237,6 +237,11 @@
     .settings-btn{width:100%;margin-top:12px;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;border:0.5px solid var(--border);}
     .settings-btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
     .settings-btn-danger{background:var(--bg2);color:var(--red-text);}
+    /* Capture result preview */
+    #capture-preview-wrap{display:none;border-radius:var(--radius);overflow:hidden;margin-bottom:12px;background:var(--bg2);position:relative;}
+    #capture-preview{width:100%;max-height:220px;object-fit:contain;display:block;}
+    .capture-status{padding:8px 12px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+    .capture-status i{font-size:14px;}
   </style>
 </head>
 <body>
@@ -266,9 +271,29 @@
   <!-- Scan pane (default) -->
   <div class="tab-pane active" id="pane-scan">
     <div class="scan-section">
-      <button class="scan-btn" id="scan-btn" onclick="startScanner()">
-        <i class="ti ti-camera"></i> Barcode scannen
-      </button>
+      <!-- Hidden input for native camera (primary method) -->
+      <input type="file" id="native-camera-input" accept="image/*" capture="environment" 
+             style="display:none" onchange="handleCameraCapture(this)">
+
+      <!-- Scan buttons -->
+      <div style="display:flex;gap:8px;margin-bottom:13px">
+        <button class="scan-btn" id="scan-btn" onclick="startNativeCamera()" style="margin-bottom:0;flex:1">
+          <i class="ti ti-camera"></i> Foto scannen
+        </button>
+        <button class="scan-btn" id="scan-btn-live" onclick="startScanner()" 
+                style="margin-bottom:0;flex:0 0 auto;width:52px;padding:13px 0;background:var(--bg2);color:var(--text2);border:1.5px solid var(--border2)" 
+                title="Live-Scanner">
+          <i class="ti ti-video"></i>
+        </button>
+      </div>
+      <!-- Preview & status for photo capture -->
+      <div id="capture-preview-wrap">
+        <img id="capture-preview" alt="Kamerafoto">
+        <div class="capture-status" id="capture-status">
+          <i class="ti ti-loader spinning"></i> Barcode wird erkannt…
+        </div>
+      </div>
+
       <div class="divider"><div class="divider-line"></div><span>oder manuell suchen</span><div class="divider-line"></div></div>
       <div class="search-row">
         <input type="text" id="search-input" placeholder="Name, Marke, Art-Nr. oder EAN…"
@@ -468,7 +493,7 @@ function getAktion(item){
 
 async function loadData(){
   setStatus('loading','Daten werden geladen…');
-  document.getElementById('scan-btn').disabled=true;
+  document.getElementById('scan-btn').disabled=true;document.getElementById('scan-btn-live').disabled=true;
   try{
     const res=await fetch(SHEET_URL);
     if(!res.ok)throw new Error('HTTP '+res.status);
@@ -477,10 +502,10 @@ async function loadData(){
     const time=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
     lastLoadTime=time;setStatus('ok',`${DATA.length} Artikel · ${time}`);
     updateAktionenBanner();
-    document.getElementById('scan-btn').disabled=false;
+    document.getElementById('scan-btn').disabled=false;document.getElementById('scan-btn-live').disabled=false;
   }catch(e){
     setStatus('error','Ladefehler — Tabelle öffentlich freigegeben?');
-    document.getElementById('scan-btn').disabled=false;
+    document.getElementById('scan-btn').disabled=false;document.getElementById('scan-btn-live').disabled=false;
   }
 }
 
@@ -846,6 +871,98 @@ function flashFeedback(){
   setTimeout(()=>flash.remove(),300);
   // Vibration feedback if available
   if(navigator.vibrate)navigator.vibrate(100);
+}
+
+// ─── NATIVE CAMERA CAPTURE (primary scan method) ────────────────────────
+function startNativeCamera(){
+  // Trigger native camera via file input
+  document.getElementById('native-camera-input').click();
+}
+
+async function handleCameraCapture(input){
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  // Reset for next scan
+  input.value='';
+
+  // Show preview
+  const wrap=document.getElementById('capture-preview-wrap');
+  const preview=document.getElementById('capture-preview');
+  const status=document.getElementById('capture-status');
+  const url=URL.createObjectURL(file);
+  preview.src=url;
+  wrap.style.display='block';
+  status.innerHTML='<i class="ti ti-loader spinning"></i> Barcode wird erkannt…';
+
+  try{
+    const code=await decodeFromImage(file);
+    URL.revokeObjectURL(url);
+    if(code){
+      status.innerHTML='<i class="ti ti-check" style="color:var(--green-text)"></i> Barcode erkannt: '+escHtml(code);
+      setTimeout(()=>{wrap.style.display='none';},1500);
+      if(navigator.vibrate)navigator.vibrate(100);
+      handleScanResult(code);
+    }else{
+      status.innerHTML='<i class="ti ti-alert-circle" style="color:var(--amber-text)"></i> Kein Barcode gefunden — nochmal versuchen';
+      setTimeout(()=>{wrap.style.display='none';},2500);
+    }
+  }catch(e){
+    URL.revokeObjectURL(url);
+    status.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red-text)"></i> Fehler: '+escHtml(String(e).slice(0,50));
+    setTimeout(()=>{wrap.style.display='none';},2500);
+  }
+}
+
+async function decodeFromImage(file){
+  // Method 1: BarcodeDetector (native, best quality)
+  if('BarcodeDetector' in window){
+    try{
+      const formats=['ean_13','ean_8','code_128','code_39','upc_a','upc_e'];
+      const supported=await BarcodeDetector.getSupportedFormats().catch(()=>formats);
+      const available=formats.filter(f=>supported.includes(f));
+      const detector=new BarcodeDetector({formats:available.length?available:formats});
+      const bitmap=await createImageBitmap(file);
+      const codes=await detector.detect(bitmap);
+      bitmap.close();
+      if(codes.length>0)return codes[0].rawValue;
+    }catch(e){console.log('BarcodeDetector failed:',e);}
+  }
+
+  // Method 2: ZXing on image
+  if(typeof ZXing!=='undefined'){
+    try{
+      return await new Promise((resolve,reject)=>{
+        const img=new Image();
+        const url=URL.createObjectURL(file);
+        img.onload=async()=>{
+          const canvas=document.createElement('canvas');
+          canvas.width=img.naturalWidth;
+          canvas.height=img.naturalHeight;
+          const ctx=canvas.getContext('2d');
+          ctx.drawImage(img,0,0);
+          URL.revokeObjectURL(url);
+          try{
+            const hints=new Map();
+            hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[
+              ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,
+              ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,
+              ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E
+            ]);
+            hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+            const reader=new ZXing.BrowserMultiFormatReader(hints);
+            const imageData=ctx.getImageData(0,0,canvas.width,canvas.height);
+            const luminanceSource=new ZXing.RGBLuminanceSource(imageData.data,canvas.width,canvas.height);
+            const binaryBitmap=new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(luminanceSource));
+            const result=reader.decode(binaryBitmap);
+            resolve(result.getText());
+          }catch(e){resolve(null);}
+        };
+        img.onerror=()=>resolve(null);
+        img.src=url;
+      });
+    }catch(e){console.log('ZXing image decode failed:',e);}
+  }
+  return null;
 }
 
 function handleScanResult(rawCode){
