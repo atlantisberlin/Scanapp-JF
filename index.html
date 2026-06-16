@@ -12,292 +12,351 @@
   <link rel="apple-touch-icon" href="favicon.svg">
   <style>
     :root {
-      --bg:#ffffff;--bg2:#f4f4f2;--bg3:#ebebea;--text:#1a1a1a;--text2:#6b6b68;--text3:#a0a09c;
-      --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);--blue:#185FA5;--blue-bg:#E6F1FB;
-      --blue-text:#0C447C;--green-bg:#EAF3DE;--green-text:#3B6D11;--amber-bg:#FAEEDA;
-      --amber-text:#854F0B;--red-bg:#FCEBEB;--red-text:#A32D2D;--radius:8px;--radius-lg:12px;
+      --bg: #ffffff;
+      --bg2: #f4f4f2;
+      --bg3: #ebebea;
+      --text: #1a1a1a;
+      --text2: #6b6b68;
+      --text3: #a0a09c;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+      --blue: #185FA5;
+      --blue-bg: #E6F1FB;
+      --blue-text: #0C447C;
+      --green-bg: #EAF3DE;
+      --green-text: #3B6D11;
+      --amber-bg: #FAEEDA;
+      --amber-text: #854F0B;
+      --red-bg: #FCEBEB;
+      --red-text: #A32D2D;
+      --radius: 8px;
+      --radius-lg: 12px;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;--text:#f0f0ee;--text2:#a0a09c;--text3:#6b6b68;
-        --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);--blue:#378ADD;
-        --blue-bg:#042C53;--blue-text:#B5D4F4;--green-bg:#173404;--green-text:#C0DD97;
-        --amber-bg:#412402;--amber-text:#FAC775;--red-bg:#501313;--red-text:#F7C1C1;
+        --bg: #1c1c1a;
+        --bg2: #252523;
+        --bg3: #2e2e2b;
+        --text: #f0f0ee;
+        --text2: #a0a09c;
+        --text3: #6b6b68;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.2);
+        --blue: #378ADD;
+        --blue-bg: #042C53;
+        --blue-text: #B5D4F4;
+        --green-bg: #173404;
+        --green-text: #C0DD97;
+        --amber-bg: #412402;
+        --amber-text: #FAC775;
+        --red-bg: #501313;
+        --red-text: #F7C1C1;
       }
     }
-    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-    html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
-    body{overflow-x:hidden;}
-    #app{max-width:480px;margin:0 auto;padding:16px;min-height:100vh;}
-    .header{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:16px;border-bottom:0.5px solid var(--border);}
-    .header-icon{width:40px;height:40px;border-radius:var(--radius);background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-    .header-icon i{font-size:20px;color:var(--blue);}
-    .header h1{font-size:17px;font-weight:600;color:var(--text);line-height:1.2;}
-    .header p{font-size:12px;color:var(--text2);margin-top:1px;}
-    .status-bar{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:14px;padding:8px 12px;border-radius:var(--radius);background:var(--bg2);color:var(--text2);}
-    .status-bar i{font-size:15px;flex-shrink:0;}
-    .s-ok{color:var(--green-text);}.s-loading{color:var(--blue);}.s-error{color:var(--red-text);}
-    .reload-btn{background:none;border:none;cursor:pointer;color:var(--blue);font-size:12px;padding:0;margin-left:auto;display:flex;align-items:center;gap:3px;white-space:nowrap;}
-    .reload-btn i{font-size:13px;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    .spinning{animation:spin 1s linear infinite;display:inline-block;}
-    .scan-section{background:var(--bg2);border-radius:var(--radius-lg);padding:14px;margin-bottom:16px;}
-    .scan-btn{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:13px;transition:opacity 0.15s;}
-    .scan-btn:active{opacity:0.85;}.scan-btn:disabled{opacity:0.45;cursor:default;}
-    .scan-btn i{font-size:20px;}
-    .divider{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
-    .divider span{font-size:11px;color:var(--text3);white-space:nowrap;}
-    .divider-line{flex:1;height:0.5px;background:var(--border);}
-    .search-row{display:flex;gap:8px;}
-    .search-row input{flex:1;padding:10px 12px;border:0.5px solid var(--border2);border-radius:var(--radius);font-size:14px;background:var(--bg);color:var(--text);outline:none;-webkit-appearance:none;}
-    .search-row input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,0.12);}
-    .search-row button{padding:10px 16px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);font-size:14px;cursor:pointer;color:var(--text);white-space:nowrap;font-weight:500;transition:background 0.1s;}
-    .search-row button:active{background:var(--bg3);}
-    /* Fullscreen scanner overlay */
-    #scanner-overlay{display:none;position:fixed;inset:0;z-index:200;background:#000;flex-direction:column;}
-    #scanner-overlay.active{display:flex;}
-    #scanner-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-    .scanner-ui{position:relative;z-index:10;display:flex;flex-direction:column;height:100%;pointer-events:none;}
-    .scanner-top{display:flex;justify-content:space-between;align-items:center;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent);}
-    .scanner-title{color:#fff;font-size:16px;font-weight:600;}
-    .scanner-close-btn{width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;pointer-events:all;}
-    .scanner-frame-area{flex:1;display:flex;align-items:center;justify-content:center;}
-    .scanner-frame{width:88vw;max-width:380px;height:160px;position:relative;}
-    .scanner-frame::before,.scanner-frame::after{content:'';position:absolute;width:28px;height:28px;border-color:#fff;border-style:solid;border-radius:3px;}
-    .scanner-frame::before{top:0;left:0;border-width:3px 0 0 3px;}
-    .scanner-frame::after{top:0;right:0;border-width:3px 3px 0 0;}
-    .scanner-frame-bl,.scanner-frame-br{position:absolute;width:28px;height:28px;border-color:#fff;border-style:solid;border-radius:3px;bottom:0;}
-    .scanner-frame-bl{left:0;border-width:0 0 3px 3px;}
-    .scanner-frame-br{right:0;border-width:0 3px 3px 0;}
-    .scanner-line{position:absolute;left:4px;right:4px;top:50%;height:2px;background:rgba(255,80,80,0.85);border-radius:1px;animation:scanline 2s ease-in-out infinite;}
-    @keyframes scanline{0%,100%{top:10%;}50%{top:90%;}}
-    .scanner-hint{color:rgba(255,255,255,0.8);font-size:13px;text-align:center;margin-top:16px;}
-    .scanner-bottom{padding:24px 20px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);display:flex;justify-content:center;gap:32px;}
-    .scanner-action-btn{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:none;color:#fff;cursor:pointer;pointer-events:all;}
-    .scanner-action-btn .btn-circle{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;font-size:22px;}
-    .scanner-action-btn span{font-size:11px;opacity:0.85;}
-    .scanner-action-btn.torch-on .btn-circle{background:rgba(255,220,0,0.3);border-color:rgba(255,220,0,0.8);}
-    .scanner-result-flash{position:absolute;inset:0;background:rgba(255,255,255,0.4);z-index:20;animation:flash 0.3s ease-out forwards;pointer-events:none;}
-    @keyframes flash{0%{opacity:1;}100%{opacity:0;}}
-    .article-top-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;}
-    .article-img-col{flex-shrink:0;width:110px;height:110px;border-radius:var(--radius);overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center;}
-    .article-img-col img{width:100%;height:100%;object-fit:contain;padding:6px;display:block;}
-    .article-img-col .img-placeholder{color:var(--text3);display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;text-align:center;}
-    .article-img-col .img-placeholder i{font-size:28px;opacity:0.35;}
-    .article-img-col .img-placeholder span{font-size:11px;}
-    .article-meta-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
-    .article-artikelnr{font-size:12px;font-family:'SF Mono','Fira Code',monospace;color:var(--text2);}
-    .article-ean{font-size:11px;color:var(--text3);font-family:'SF Mono','Fira Code',monospace;}
-    .result-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px;}
-    .result-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px;}
-    .result-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.45;flex:1;}
-    .badge{font-size:11px;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0;font-weight:500;}
-    .badge-active{background:var(--green-bg);color:var(--green-text);}
-    .badge-inactive{background:var(--red-bg);color:var(--red-text);}
-    .badge-outlet{background:var(--amber-bg);color:var(--amber-text);}
-    .meta-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
-    .chip{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--bg2);color:var(--text2);display:flex;align-items:center;gap:3px;}
-    .chip i{font-size:12px;}
-    .restposten-banner{background:var(--amber-bg);border-radius:var(--radius);padding:9px 12px;font-size:12px;color:var(--amber-text);margin-bottom:14px;display:flex;align-items:center;gap:7px;font-weight:500;}
-    .price-row{display:flex;gap:10px;margin-bottom:16px;align-items:baseline;flex-wrap:wrap;}
-    .price-main{font-size:26px;font-weight:700;color:var(--text);}
-    .price-uvp{font-size:13px;color:var(--text3);text-decoration:line-through;}
-    .price-saving{font-size:12px;padding:3px 9px;background:var(--green-bg);color:var(--green-text);border-radius:20px;font-weight:600;}
-    .section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:9px;}
-    .stock-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:14px;}
-    .stock-item{background:var(--bg2);border-radius:var(--radius);padding:8px 6px;text-align:center;}
-    .stock-loc{font-size:10px;color:var(--text2);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .stock-num{font-size:18px;font-weight:700;}
-    .stock-details{display:none;}
-    .s0{color:var(--text3);}.slow{color:var(--amber-text);}.sok{color:var(--green-text);}
-    .divider-thin{height:0.5px;background:var(--border);margin:12px 0;}
-    .aktionen-modal{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;display:flex;flex-direction:column;}
-    .aktionen-modal.hidden{display:none;}
-    .aktionen-sheet{background:var(--bg);flex:1;margin-top:60px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;display:flex;flex-direction:column;overflow:hidden;}
-    .aktionen-sheet-header{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:0.5px solid var(--border);flex-shrink:0;}
-    .aktionen-sheet-header h2{font-size:16px;font-weight:700;color:var(--text);}
-    .aktionen-sheet-header .close-modal{background:var(--bg2);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text2);}
-    .aktionen-sheet-body{overflow-y:auto;padding:12px;flex:1;-webkit-overflow-scrolling:touch;}
-    .aktion-list-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;width:100%;text-align:left;transition:background 0.1s;}
-    .aktion-list-item:active{background:var(--bg2);}
-    .aktion-list-img{width:48px;height:48px;border-radius:var(--radius);background:var(--bg2);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-    .aktion-list-img img{width:100%;height:100%;object-fit:contain;padding:3px;}
-    .aktion-list-info{flex:1;min-width:0;}
-    .aktion-list-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.35;}
-    .aktion-list-nr{font-size:11px;color:var(--text3);font-family:monospace;margin-top:1px;}
-    .aktion-list-tag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:#E65100;background:#FFE69C;border:1px solid #FFCA28;border-radius:20px;padding:2px 7px;margin-top:4px;}
-    .aktion-list-stock{text-align:right;flex-shrink:0;}
-    .aktion-list-stk{font-size:14px;font-weight:700;}
-    .aktion-list-loc{font-size:10px;color:var(--text3);margin-top:1px;}
-    .copy-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:2px 4px;border-radius:4px;font-size:14px;vertical-align:middle;transition:color 0.15s;}
-    .copy-btn:active{color:var(--blue);}.copy-btn.copied{color:var(--green-text);}
-    .aktion-banner{display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#FFF3CD,#FFE69C);border:1.5px solid #FFCA28;border-radius:var(--radius);padding:11px 13px;margin-bottom:12px;}
-    .aktion-banner i{font-size:20px;color:#E65100;flex-shrink:0;margin-top:1px;}
-    .aktion-banner-text{flex:1;}
-    .aktion-banner-label{font-size:10px;font-weight:700;color:#E65100;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;}
-    .aktion-banner-msg{font-size:13px;font-weight:500;color:#3E2000;line-height:1.4;}
-    .aktion-chip{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#FFE69C;color:#E65100;border:1px solid #FFCA28;margin-top:3px;}
-    .aktionen-banner{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#FFF3CD,#FFE069);border:1.5px solid #FFCA28;border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;cursor:pointer;transition:opacity 0.15s;}
-    .aktionen-banner:active{opacity:0.85;}
-    .aktionen-banner-icon{font-size:24px;flex-shrink:0;}
-    .aktionen-banner-text{flex:1;}
-    .aktionen-banner-title{font-size:14px;font-weight:700;color:#E65100;}
-    .aktionen-banner-sub{font-size:12px;color:#5D3A00;margin-top:2px;}
-    .aktionen-banner-arrow{font-size:18px;color:#E65100;flex-shrink:0;}
-    .location-modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:flex;align-items:flex-end;justify-content:center;padding:16px;}
-    .location-modal.hidden{display:none;}
-    .location-sheet{background:var(--bg);border-radius:var(--radius-lg);width:100%;max-width:480px;padding:20px 16px 32px;}
-    .location-sheet h2{font-size:17px;font-weight:600;margin-bottom:6px;}
-    .location-sheet p{font-size:13px;color:var(--text2);margin-bottom:18px;}
-    .location-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-    .location-opt{padding:14px 12px;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--bg2);cursor:pointer;text-align:center;font-size:14px;font-weight:500;color:var(--text);transition:all 0.15s;}
-    .location-opt:active{background:var(--bg3);}
-    .location-opt.selected{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-text);}
-    .location-opt-all{grid-column:1 / -1;}
-    .location-save{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;}
-    .location-bar{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:14px;padding:8px 12px;border-radius:var(--radius);background:var(--blue-bg);color:var(--blue-text);cursor:pointer;}
-    .location-bar i{font-size:15px;flex-shrink:0;}
-    .location-bar span{flex:1;font-weight:500;}
-    .location-bar .change-btn{font-size:11px;color:var(--blue);background:none;border:none;cursor:pointer;padding:0;white-space:nowrap;}
-    .stock-item.highlight{background:var(--blue-bg);border:1.5px solid var(--blue);}
-    .stock-item.highlight .stock-loc{color:var(--blue-text);font-weight:600;}
-    .stock-item.highlight .stock-num{color:var(--blue-text);}
-    .vsitem.highlight{background:var(--blue-bg);border:1.5px solid var(--blue);}
-    .vsitem.highlight .vsloc{color:var(--blue-text);font-weight:600;}
-    .vsitem.highlight .vsnum{color:var(--blue-text);}
-    .results-list{display:flex;flex-direction:column;gap:6px;}
-    .results-header{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;}
-    .result-row{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);cursor:pointer;text-align:left;width:100%;transition:background 0.1s;}
-    .result-row:active{background:var(--bg2);}
-    .result-row-img{width:44px;height:44px;border-radius:var(--radius);background:var(--bg2);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-    .result-row-img img{width:100%;height:100%;object-fit:contain;padding:3px;}
-    .result-row-img i{font-size:20px;color:var(--text3);opacity:0.4;}
-    .result-row-info{flex:1;min-width:0;}
-    .result-row-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.35;}
-    .result-row-name em{font-style:normal;color:var(--blue);}
-    .result-row-sub{font-size:11px;color:var(--text3);margin-top:2px;font-family:'SF Mono','Fira Code',monospace;}
-    .variants-section{margin-top:12px;}
-    .variants-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;}
-    .variant-details{margin-bottom:6px;border-radius:var(--radius);overflow:hidden;border:0.5px solid var(--border);}
-    .variant-summary{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:var(--bg2);cursor:pointer;list-style:none;gap:8px;user-select:none;}
-    .variant-summary::-webkit-details-marker{display:none;}
-    .variant-details[open] .variant-summary{background:var(--bg3);border-bottom:0.5px solid var(--border);}
-    .variant-summary-left{flex:1;}
-    .variant-name{font-size:13px;color:var(--text);line-height:1.35;font-weight:500;}
-    .variant-stock{font-size:12px;font-weight:700;white-space:nowrap;}
-    .variant-stock.sok{color:var(--green-text);}.variant-stock.slow{color:var(--amber-text);}.variant-stock.s0{color:var(--text3);}
-    .variant-chevron{font-size:13px;color:var(--text3);transition:transform 0.2s;flex-shrink:0;}
-    .variant-details[open] .variant-chevron{transform:rotate(180deg);}
-    .variant-body{background:var(--bg);padding:12px 13px;display:flex;flex-direction:column;gap:10px;}
-    .variant-top-row{display:flex;gap:10px;align-items:flex-start;}
-    .variant-img-link{display:block;flex-shrink:0;width:80px;height:80px;border-radius:var(--radius);overflow:hidden;background:var(--bg2);}
-    .variant-img-link img{width:100%;height:100%;object-fit:contain;padding:4px;display:block;}
-    .variant-info{flex:1;min-width:0;}
-    .variant-artikelnr-link{display:inline-block;font-size:12px;font-family:'SF Mono','Fira Code',monospace;color:var(--blue);text-decoration:none;margin-bottom:4px;word-break:break-all;}
-    .variant-artikelnr-link:hover{text-decoration:underline;}
-    .variant-stock-mini{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;}
-    .variant-stock-mini-extra{display:none;}
-    .vsitem{background:var(--bg2);border-radius:var(--radius);padding:6px 4px;text-align:center;}
-    .vsloc{font-size:10px;color:var(--text3);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .vsnum{font-size:14px;font-weight:700;}
-    .variant-price-row{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-top:4px;}
-    .variant-price-main{font-size:16px;font-weight:700;color:var(--text);}
-    .variant-price-uvp{font-size:12px;color:var(--text3);text-decoration:line-through;}
-    .variant-price-saving{font-size:11px;padding:2px 7px;background:var(--green-bg);color:var(--green-text);border-radius:20px;font-weight:600;}
-    .error-card{background:var(--red-bg);border:0.5px solid rgba(162,45,45,0.25);border-radius:var(--radius-lg);padding:14px 16px;color:var(--red-text);font-size:13px;display:flex;align-items:center;gap:10px;}
-    .error-card i{font-size:20px;flex-shrink:0;}
-    .empty-state{text-align:center;padding:40px 16px;color:var(--text3);font-size:13px;}
-    .empty-state i{font-size:48px;display:block;margin-bottom:12px;opacity:0.35;}
-    .empty-state p{line-height:1.5;}
-    /* Tab navigation */
-    #app{padding-bottom:calc(70px + env(safe-area-inset-bottom,0px));}
-    .tab-nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;display:flex;background:var(--bg);border-top:0.5px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0px);z-index:50;}
-    .tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 6px;cursor:pointer;border:none;background:none;color:var(--text3);border-top:2px solid transparent;transition:color 0.15s,border-color 0.15s;gap:2px;user-select:none;}
-    .tab-item i{font-size:20px;display:block;}
-    .tab-item span{font-size:10px;font-weight:500;}
-    .tab-item.active{color:var(--blue);border-top-color:var(--blue);}
-    .tab-pane{display:none;}
-    .tab-pane.active{display:block;}
-    .history-empty{text-align:center;padding:48px 16px;color:var(--text3);font-size:13px;}
-    .history-empty i{font-size:44px;display:block;margin-bottom:12px;opacity:0.3;}
-    .history-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:0.5px solid var(--border);cursor:pointer;}
-    .history-item:active{background:var(--bg2);}
-    .history-img{width:42px;height:42px;border-radius:var(--radius);background:var(--bg2);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-    .history-img img{width:100%;height:100%;object-fit:contain;padding:3px;}
-    .history-info{flex:1;min-width:0;}
-    .history-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .history-nr{font-size:11px;color:var(--text3);font-family:monospace;margin-top:1px;}
-    .history-meta{font-size:10px;color:var(--text3);white-space:nowrap;}
-    .settings-group{padding:0 16px;}
-    .settings-group-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:20px 0 8px;}
-    .settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:0.5px solid var(--border);}
-    .settings-row:last-child{border-bottom:none;}
-    .settings-label{font-size:14px;color:var(--text);}
-    .settings-val{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:5px;}
-    .settings-btn{width:100%;margin-top:12px;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;border:0.5px solid var(--border);}
-    .settings-btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
-    .settings-btn-danger{background:var(--bg2);color:var(--red-text);}
-    /* Capture result preview */
-    #capture-preview-wrap{display:none;border-radius:var(--radius);overflow:hidden;margin-bottom:12px;background:var(--bg2);position:relative;}
-    #capture-preview{width:100%;max-height:220px;object-fit:contain;display:block;}
-    .capture-status{padding:8px 12px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;}
-    .capture-status i{font-size:14px;}
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { overflow-x: hidden; }
+    #app { max-width: 480px; margin: 0 auto; padding: 0; min-height: 100vh; }
+    .scan-section { padding: 14px 16px; }
+    .result-card, .results-list { margin: 0 16px 16px; }
+    .empty-state { padding: 40px 16px; }
+
+    /* Compact top bar */
+    .top-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 0.5px solid var(--border); background: var(--bg); }
+    .top-bar-icon { width: 32px; height: 32px; border-radius: var(--radius); background: var(--blue-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .top-bar-icon i { font-size: 16px; color: var(--blue); }
+    .top-bar-info { flex: 1; min-width: 0; }
+    .top-bar-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .top-bar-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text2); margin-top: 2px; flex-wrap: wrap; }
+
+    /* Tab navigation — fixed bottom */
+    .tab-nav { display: flex; border-top: 0.5px solid var(--border); background: var(--bg); position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; max-width: 480px; margin: 0 auto; padding-bottom: env(safe-area-inset-bottom, 0px); }
+    .tab-nav-item { flex: 1; padding: 8px 4px 6px; text-align: center; font-size: 10px; color: var(--text3); cursor: pointer; border-top: 2px solid transparent; transition: color 0.15s, border-color 0.15s; user-select: none; }
+    .tab-nav-item i { display: block; font-size: 19px; margin-bottom: 2px; }
+    .tab-nav-item.active { color: var(--blue); border-top-color: var(--blue); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+
+    /* Verlauf */
+    .history-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+    .history-item:active { background: var(--bg2); }
+    .history-img { width: 40px; height: 40px; border-radius: var(--radius); background: var(--bg2); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .history-img img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+    .history-info { flex: 1; min-width: 0; }
+    .history-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+    .history-nr { font-size: 11px; color: var(--text3); font-family: monospace; }
+    .history-time { font-size: 10px; color: var(--text3); white-space: nowrap; }
+    .history-empty { text-align: center; padding: 40px 16px; color: var(--text3); font-size: 13px; }
+    .history-empty i { font-size: 40px; display: block; margin-bottom: 10px; opacity: 0.3; }
+
+    /* Einstellungen */
+    .settings-section { padding: 16px; }
+    .settings-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-row-label { font-size: 14px; color: var(--text); }
+    .settings-row-val { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+
+    /* Status bar (inline in top-bar) */
+    .s-ok { color: var(--green-text); }
+    .s-loading { color: var(--blue); }
+    .s-error { color: var(--red-text); }
+    .reload-btn { background: none; border: none; cursor: pointer; color: var(--blue); font-size: 12px; padding: 0; margin-left: auto; display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+    .reload-btn i { font-size: 13px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinning { animation: spin 1s linear infinite; display: inline-block; }
+
+    /* Scanner section */
+    .scan-section { background: var(--bg2); border-radius: var(--radius-lg); padding: 14px; margin-bottom: 16px; }
+    .scan-btn { width: 100%; padding: 13px; background: var(--blue); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 13px; transition: opacity 0.15s; }
+    .scan-btn:active { opacity: 0.85; }
+    .scan-btn:disabled { opacity: 0.45; cursor: default; }
+    .scan-btn i { font-size: 20px; }
+    .divider { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .divider span { font-size: 11px; color: var(--text3); white-space: nowrap; }
+    .divider-line { flex: 1; height: 0.5px; background: var(--border); }
+    .search-row { display: flex; gap: 8px; }
+    .search-row input {
+      flex: 1; padding: 10px 12px; border: 0.5px solid var(--border2);
+      border-radius: var(--radius); font-size: 14px;
+      background: var(--bg); color: var(--text);
+      outline: none; -webkit-appearance: none;
+    }
+    .search-row input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(24,95,165,0.12); }
+    .search-row button {
+      padding: 10px 16px; background: var(--bg); border: 0.5px solid var(--border2);
+      border-radius: var(--radius); font-size: 14px; cursor: pointer; color: var(--text);
+      white-space: nowrap; font-weight: 500; transition: background 0.1s;
+    }
+    .search-row button:active { background: var(--bg3); }
+
+    /* Video scanner */
+    #video-wrapper { display: none; position: relative; border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; background: #000; }
+    #qr-reader { width: 100%; }
+    #qr-reader video { width: 100% !important; border-radius: var(--radius); }
+    #qr-reader__scan_region { border-radius: var(--radius); }
+    #qr-reader__dashboard { display: none !important; }
+    .close-scan { position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;pointer-events:all;z-index:10; }
+
+    /* Main article top layout */
+    .article-top-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+    .article-img-col { flex-shrink: 0; width: 110px; height: 110px; border-radius: var(--radius); overflow: hidden; background: var(--bg2); display: flex; align-items: center; justify-content: center; }
+    .article-img-col img { width: 100%; height: 100%; object-fit: contain; padding: 6px; display: block; }
+    .article-img-col .img-placeholder { color: var(--text3); display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px; text-align: center; }
+    .article-img-col .img-placeholder i { font-size: 28px; opacity: 0.35; }
+    .article-img-col .img-placeholder span { font-size: 11px; }
+    .article-meta-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+    .article-artikelnr { font-size: 12px; font-family: 'SF Mono','Fira Code',monospace; color: var(--text2); }
+    .article-ean { font-size: 11px; color: var(--text3); font-family: 'SF Mono','Fira Code',monospace; }
+
+    /* Product image */
+    .product-img-wrap { width: 100%; border-radius: var(--radius); overflow: hidden; background: var(--bg2); margin-bottom: 14px; display: flex; align-items: center; justify-content: center; min-height: 160px; }
+    .product-img-wrap img { width: 100%; max-height: 220px; object-fit: contain; display: block; padding: 12px; }
+    .product-img-wrap .img-placeholder { color: var(--text3); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px; }
+    .product-img-wrap .img-placeholder i { font-size: 36px; opacity: 0.35; }
+
+    /* Result card */
+    .result-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; }
+    .result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 10px; }
+    .result-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45; flex: 1; }
+    .badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; font-weight: 500; }
+    .badge-active { background: var(--green-bg); color: var(--green-text); }
+    .badge-inactive { background: var(--red-bg); color: var(--red-text); }
+    .badge-outlet { background: var(--amber-bg); color: var(--amber-text); }
+    .meta-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .chip { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: var(--bg2); color: var(--text2); display: flex; align-items: center; gap: 3px; }
+    .chip i { font-size: 12px; }
+    .restposten-banner { background: var(--amber-bg); border-radius: var(--radius); padding: 9px 12px; font-size: 12px; color: var(--amber-text); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; font-weight: 500; }
+    .price-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: baseline; flex-wrap: wrap; }
+    .price-main { font-size: 26px; font-weight: 700; color: var(--text); }
+    .price-uvp { font-size: 13px; color: var(--text3); text-decoration: line-through; }
+    .price-saving { font-size: 12px; padding: 3px 9px; background: var(--green-bg); color: var(--green-text); border-radius: 20px; font-weight: 600; }
+    .section-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 9px; }
+    .stock-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 6px; margin-bottom: 14px; }
+    .stock-item { background: var(--bg2); border-radius: var(--radius); padding: 8px 6px; text-align: center; }
+    .stock-loc { font-size: 10px; color: var(--text2); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stock-num { font-size: 18px; font-weight: 700; }
+    /* hide old details/extra — all 5 now in one row */
+    .stock-details { display: none; }
+    .s0 { color: var(--text3); }
+    .slow { color: var(--amber-text); }
+    .sok { color: var(--green-text); }
+    .divider-thin { height: 0.5px; background: var(--border); margin: 12px 0; }
+    .ids-row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .id-block .lbl { font-size: 10px; color: var(--text3); display: block; font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 2px; }
+    .id-block .val { font-size: 12px; color: var(--text2); font-family: 'SF Mono', 'Fira Code', monospace; }
+
+    /* Aktionen-Banner & Übersicht */
+    .aktionen-banner { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #FFF3CD, #FFE069); border: 1.5px solid #FFCA28; border-radius: var(--radius); padding: 12px 14px; margin-bottom: 14px; cursor: pointer; transition: opacity 0.15s; }
+    .aktionen-banner:active { opacity: 0.85; }
+    .aktionen-banner-icon { font-size: 24px; flex-shrink: 0; }
+    .aktionen-banner-text { flex: 1; }
+    .aktionen-banner-title { font-size: 14px; font-weight: 700; color: #E65100; }
+    .aktionen-banner-sub { font-size: 12px; color: #5D3A00; margin-top: 2px; }
+    .aktionen-banner-arrow { font-size: 18px; color: #E65100; flex-shrink: 0; }
+    /* Aktionen Modal */
+    .aktionen-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; display: flex; flex-direction: column; }
+    .aktionen-modal.hidden { display: none; }
+    .aktionen-sheet { background: var(--bg); flex: 1; margin-top: 60px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; display: flex; flex-direction: column; overflow: hidden; }
+    .aktionen-sheet-header { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+    .aktionen-sheet-header h2 { font-size: 16px; font-weight: 700; color: var(--text); }
+    .aktionen-sheet-header .close-modal { background: var(--bg2); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--text2); }
+    .aktionen-sheet-body { overflow-y: auto; padding: 12px; flex: 1; -webkit-overflow-scrolling: touch; }
+    .aktion-list-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; width: 100%; text-align: left; transition: background 0.1s; }
+    .aktion-list-item:active { background: var(--bg2); }
+    .aktion-list-img { width: 48px; height: 48px; border-radius: var(--radius); background: var(--bg2); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .aktion-list-img img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+    .aktion-list-info { flex: 1; min-width: 0; }
+    .aktion-list-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.35; }
+    .aktion-list-nr { font-size: 11px; color: var(--text3); font-family: monospace; margin-top: 1px; }
+    .aktion-list-tag { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; color: #E65100; background: #FFE69C; border: 1px solid #FFCA28; border-radius: 20px; padding: 2px 7px; margin-top: 4px; }
+    .aktion-list-stock { text-align: right; flex-shrink: 0; }
+    .aktion-list-stk { font-size: 14px; font-weight: 700; }
+    .aktion-list-loc { font-size: 10px; color: var(--text3); margin-top: 1px; }
+
+    /* Kopieren-Button */
+    .copy-btn { background: none; border: none; cursor: pointer; color: var(--text3); padding: 2px 4px; border-radius: 4px; font-size: 14px; vertical-align: middle; transition: color 0.15s; }
+    .copy-btn:active { color: var(--blue); }
+    .copy-btn.copied { color: var(--green-text); }
+
+    /* Aktionsangebot Banner */
+    .aktion-banner { display: flex; align-items: flex-start; gap: 10px; background: linear-gradient(135deg, #FFF3CD, #FFE69C); border: 1.5px solid #FFCA28; border-radius: var(--radius); padding: 11px 13px; margin-bottom: 12px; }
+    .aktion-banner i { font-size: 20px; color: #E65100; flex-shrink: 0; margin-top: 1px; }
+    .aktion-banner-text { flex: 1; }
+    .aktion-banner-label { font-size: 10px; font-weight: 700; color: #E65100; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .aktion-banner-msg { font-size: 13px; font-weight: 500; color: #3E2000; line-height: 1.4; }
+    /* Variante Aktions-Badge */
+    .aktion-chip { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; background: #FFE69C; color: #E65100; border: 1px solid #FFCA28; margin-top: 3px; }
+
+    /* Standort-Auswahl */
+    .location-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
+    .location-modal.hidden { display: none; }
+    .location-sheet { background: var(--bg); border-radius: var(--radius-lg); width: 100%; max-width: 480px; padding: 20px 16px 32px; }
+    .location-sheet h2 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .location-sheet p { font-size: 13px; color: var(--text2); margin-bottom: 18px; }
+    .location-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .location-opt { padding: 14px 12px; border-radius: var(--radius); border: 1.5px solid var(--border); background: var(--bg2); cursor: pointer; text-align: center; font-size: 14px; font-weight: 500; color: var(--text); transition: all 0.15s; }
+    .location-opt:active { background: var(--bg3); }
+    .location-opt.selected { border-color: var(--blue); background: var(--blue-bg); color: var(--blue-text); }
+    .location-opt-all { grid-column: 1 / -1; }
+    .location-save { width: 100%; padding: 13px; background: var(--blue); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+    .location-bar { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 14px; padding: 8px 12px; border-radius: var(--radius); background: var(--blue-bg); color: var(--blue-text); cursor: pointer; }
+    .location-bar i { font-size: 15px; flex-shrink: 0; }
+    .location-bar span { flex: 1; font-weight: 500; }
+    .location-bar .change-btn { font-size: 11px; color: var(--blue); background: none; border: none; cursor: pointer; padding: 0; white-space: nowrap; }
+    /* Hervorgehobene Standort-Kachel */
+    .stock-item.highlight { background: var(--blue-bg); border: 1.5px solid var(--blue); }
+    .stock-item.highlight .stock-loc { color: var(--blue-text); font-weight: 600; }
+    .stock-item.highlight .stock-num { color: var(--blue-text); }
+    .vsitem.highlight { background: var(--blue-bg); border: 1.5px solid var(--blue); }
+    .vsitem.highlight .vsloc { color: var(--blue-text); font-weight: 600; }
+    .vsitem.highlight .vsnum { color: var(--blue-text); }
+
+    /* Suchergebnisliste */
+    .results-list { display: flex; flex-direction: column; gap: 6px; }
+    .results-header { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+    .result-row { display: flex; align-items: center; gap: 10px; padding: 10px 13px; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); cursor: pointer; text-align: left; width: 100%; transition: background 0.1s; }
+    .result-row:active { background: var(--bg2); }
+    .result-row-img { width: 44px; height: 44px; border-radius: var(--radius); background: var(--bg2); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .result-row-img img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+    .result-row-img i { font-size: 20px; color: var(--text3); opacity: 0.4; }
+    .result-row-info { flex: 1; min-width: 0; }
+    .result-row-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.35; }
+    .result-row-name em { font-style: normal; color: var(--blue); }
+    .result-row-sub { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: 'SF Mono','Fira Code',monospace; }
+    .result-row-stock { font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+    /* Master / Varianten */
+    .variants-section { margin-top: 12px; }
+    .variants-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+    .variant-details { margin-bottom: 6px; border-radius: var(--radius); overflow: hidden; border: 0.5px solid var(--border); }
+    .variant-summary { display: flex; align-items: center; justify-content: space-between; padding: 10px 13px; background: var(--bg2); cursor: pointer; list-style: none; gap: 8px; user-select: none; }
+    .variant-summary::-webkit-details-marker { display: none; }
+    .variant-details[open] .variant-summary { background: var(--bg3); border-bottom: 0.5px solid var(--border); }
+    .variant-summary-left { flex: 1; }
+    .variant-name { font-size: 13px; color: var(--text); line-height: 1.35; font-weight: 500; }
+    .variant-stock { font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .variant-stock.sok { color: var(--green-text); }
+    .variant-stock.slow { color: var(--amber-text); }
+    .variant-stock.s0 { color: var(--text3); }
+    .variant-chevron { font-size: 13px; color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
+    .variant-details[open] .variant-chevron { transform: rotate(180deg); }
+    .variant-body { background: var(--bg); padding: 12px 13px; display: flex; flex-direction: column; gap: 10px; }
+    .variant-top-row { display: flex; gap: 10px; align-items: flex-start; }
+    .variant-img-link { display: block; flex-shrink: 0; width: 80px; height: 80px; border-radius: var(--radius); overflow: hidden; background: var(--bg2); }
+    .variant-img-link img { width: 100%; height: 100%; object-fit: contain; padding: 4px; display: block; }
+    .variant-info { flex: 1; min-width: 0; }
+    .variant-artikelnr-link { display: inline-block; font-size: 12px; font-family: 'SF Mono','Fira Code',monospace; color: var(--blue); text-decoration: none; margin-bottom: 4px; word-break: break-all; }
+    .variant-artikelnr-link:hover { text-decoration: underline; }
+    .variant-stock-mini { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 5px; }
+    .variant-stock-mini-extra { display: none; }
+    .vsitem { background: var(--bg2); border-radius: var(--radius); padding: 6px 4px; text-align: center; }
+    .vsloc { font-size: 10px; color: var(--text3); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vsnum { font-size: 14px; font-weight: 700; }
+
+    .variant-price-row { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; margin-top: 4px; }
+    .variant-price-main { font-size: 16px; font-weight: 700; color: var(--text); }
+    .variant-price-uvp { font-size: 12px; color: var(--text3); text-decoration: line-through; }
+    .variant-price-saving { font-size: 11px; padding: 2px 7px; background: var(--green-bg); color: var(--green-text); border-radius: 20px; font-weight: 600; }
+    .rp-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
+    .rp-badge-yes { background: var(--red-bg); color: var(--red-text); }
+    .rp-badge-no  { background: var(--green-bg); color: var(--green-text); }
+
+    /* States */
+    .error-card { background: var(--red-bg); border: 0.5px solid rgba(162,45,45,0.25); border-radius: var(--radius-lg); padding: 14px 16px; color: var(--red-text); font-size: 13px; display: flex; align-items: center; gap: 10px; }
+    .error-card i { font-size: 20px; flex-shrink: 0; }
+    .empty-state { text-align: center; padding: 40px 16px; color: var(--text3); font-size: 13px; }
+    .empty-state i { font-size: 48px; display: block; margin-bottom: 12px; opacity: 0.35; }
+    .empty-state p { line-height: 1.5; }
+
+    /* Safe area for notch phones */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .tab-nav { padding-bottom: env(safe-area-inset-bottom); }
+    }
   </style>
 </head>
 <body>
 <div id="app">
-  <div class="header">
-    <div class="header-icon"><i class="ti ti-scan"></i></div>
-    <div><h1>Artikelscanner</h1><p>EAN scannen oder Nummer eingeben</p></div>
-  </div>
-  <div class="status-bar" id="status-bar">
-    <i class="ti ti-loader s-loading spinning" id="status-icon"></i>
-    <span id="status-text">Daten werden geladen…</span>
-    <button class="reload-btn" onclick="loadData()"><i class="ti ti-refresh"></i> Aktualisieren</button>
-  </div>
-  <div class="location-bar" id="location-bar" onclick="document.getElementById('location-modal').classList.remove('hidden')" style="display:none">
-    <i class="ti ti-map-pin"></i>
-    <span id="location-label">Kein Standort gewählt</span>
-    <button class="change-btn">Ändern</button>
-  </div>
-  <div id="aktionen-banner" style="display:none" class="aktionen-banner" onclick="openAktionenModal()">
-    <span class="aktionen-banner-icon">⚡</span>
-    <div class="aktionen-banner-text">
-      <div class="aktionen-banner-title">Aktuelle Aktionsangebote</div>
-      <div class="aktionen-banner-sub" id="aktionen-banner-sub">Artikel mit Sonderpreisen anzeigen</div>
+  <h2 class="sr-only">Artikelscanner</h2>
+  <!-- Kompakte Top-Bar -->
+  <div class="top-bar">
+    <div class="top-bar-icon"><i class="ti ti-scan" aria-hidden="true"></i></div>
+    <div class="top-bar-info">
+      <div class="top-bar-title">Artikelscanner</div>
+      <div class="top-bar-meta">
+        <span id="status-meta" style="display:flex;align-items:center;gap:4px">
+          <i class="ti ti-loader s-loading spinning" id="status-icon" style="font-size:12px"></i>
+          <span id="status-text">Laden…</span>
+        </span>
+        <span id="loc-meta" style="display:none;align-items:center;gap:3px;color:var(--blue);font-weight:500;cursor:pointer" onclick="document.getElementById('location-modal').classList.remove('hidden')">
+          <i class="ti ti-map-pin" style="font-size:12px"></i><span id="location-label">Standort</span>
+        </span>
+      </div>
     </div>
-    <i class="ti ti-chevron-right aktionen-banner-arrow"></i>
+    <button id="aktionen-banner" style="display:none;background:#FFE69C;border:1px solid #FFCA28;border-radius:var(--radius);padding:5px 9px;font-size:11px;font-weight:600;color:#633806;cursor:pointer;align-items:center;gap:4px" onclick="openAktionenModal()">
+      <i class="ti ti-bolt" style="font-size:12px"></i><span id="aktionen-banner-sub">Aktionen</span>
+    </button>
   </div>
-  <!-- Scan pane (default) -->
+
+  <!-- Tab: Scannen -->
   <div class="tab-pane active" id="pane-scan">
     <div class="scan-section">
-      <!-- Hidden input for native camera (primary method) -->
-      <input type="file" id="native-camera-input" accept="image/*" capture="environment" 
-             style="display:none" onchange="handleCameraCapture(this)">
-
-      <!-- Scan buttons -->
-      <div style="display:flex;gap:8px;margin-bottom:13px">
-        <button class="scan-btn" id="scan-btn" onclick="startNativeCamera()" style="margin-bottom:0;flex:1">
-          <i class="ti ti-camera"></i> Foto scannen
-        </button>
-        <button class="scan-btn" id="scan-btn-live" onclick="startScanner()" 
-                style="margin-bottom:0;flex:0 0 auto;width:52px;padding:13px 0;background:var(--bg2);color:var(--text2);border:1.5px solid var(--border2)" 
-                title="Live-Scanner">
-          <i class="ti ti-video"></i>
-        </button>
+      <div id="video-wrapper">
+        <div id="qr-reader"></div>
+        <button class="close-scan" onclick="stopScanner()" style="top:8px;right:8px"><i class="ti ti-x"></i></button>
       </div>
-      <!-- Preview & status for photo capture -->
-      <div id="capture-preview-wrap">
-        <img id="capture-preview" alt="Kamerafoto">
-        <div class="capture-status" id="capture-status">
-          <i class="ti ti-loader spinning"></i> Barcode wird erkannt…
-        </div>
+      <button class="scan-btn" id="scan-btn" onclick="startScanner()">
+        <i class="ti ti-camera"></i> Barcode scannen
+      </button>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span>oder manuell suchen</span>
+        <div class="divider-line"></div>
       </div>
-
-      <div class="divider"><div class="divider-line"></div><span>oder manuell suchen</span><div class="divider-line"></div></div>
       <div class="search-row">
         <input type="text" id="search-input" placeholder="Name, Marke, Art-Nr. oder EAN…"
-          oninput="onInput(this.value)" onkeydown="if(event.key==='Enter')doSearch()"
+          oninput="onInput(this.value)"
+          onkeydown="if(event.key==='Enter')doSearch()"
           inputmode="text" autocomplete="off" autocorrect="off" spellcheck="false">
         <button onclick="doSearch()">Suchen</button>
       </div>
@@ -310,101 +369,73 @@
     </div>
   </div>
 
-  <!-- Verlauf pane -->
+  <!-- Tab: Aktionen -->
+  <div class="tab-pane" id="pane-aktionen">
+    <div id="aktionen-tab-list" style="padding:12px 16px"></div>
+  </div>
+
+  <!-- Tab: Verlauf -->
   <div class="tab-pane" id="pane-history">
-    <div id="history-content">
-      <div class="history-empty">
-        <i class="ti ti-history"></i>
-        <p>Noch keine Artikel gescannt</p>
-      </div>
+    <div id="history-list">
+      <div class="history-empty"><i class="ti ti-history"></i><p>Noch keine Artikel gescannt</p></div>
     </div>
   </div>
 
-  <!-- Einstellungen pane -->
+  <!-- Tab: Einstellungen -->
   <div class="tab-pane" id="pane-settings">
-    <div class="settings-group">
-      <div class="settings-group-title">Standort</div>
+    <div class="settings-section">
+      <div class="settings-title">Standort</div>
       <div class="settings-row">
-        <span class="settings-label">Mein Standort</span>
-        <span class="settings-val" id="settings-loc">Nicht gewählt <i class="ti ti-chevron-right" style="font-size:13px"></i></span>
+        <span class="settings-row-label">Mein Standort</span>
+        <span class="settings-row-val" id="settings-loc-val">Nicht gewählt <i class="ti ti-chevron-right" style="font-size:14px;color:var(--text3)"></i></span>
       </div>
-      <button class="settings-btn settings-btn-primary" onclick="document.getElementById('location-modal').classList.remove('hidden')">
-        <i class="ti ti-map-pin"></i> Standort ändern
+      <button onclick="document.getElementById('location-modal').classList.remove('hidden')" style="width:100%;margin-top:12px;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer">
+        Standort ändern
       </button>
     </div>
-    <div class="settings-group">
-      <div class="settings-group-title">Daten</div>
+    <div class="settings-section" style="border-top:0.5px solid var(--border)">
+      <div class="settings-title">Daten</div>
       <div class="settings-row">
-        <span class="settings-label">Artikel geladen</span>
-        <span class="settings-val" id="settings-count">—</span>
+        <span class="settings-row-label">Artikel geladen</span>
+        <span class="settings-row-val" id="settings-count">—</span>
       </div>
       <div class="settings-row">
-        <span class="settings-label">Letzte Aktualisierung</span>
-        <span class="settings-val" id="settings-time">—</span>
+        <span class="settings-row-label">Letzte Aktualisierung</span>
+        <span class="settings-row-val" id="settings-time">—</span>
       </div>
-      <button class="settings-btn" style="background:var(--bg2);color:var(--text)" onclick="loadData()">
+      <button onclick="loadData()" style="width:100%;margin-top:12px;padding:11px;background:var(--bg2);color:var(--text);border:0.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
         <i class="ti ti-refresh"></i> Daten aktualisieren
       </button>
     </div>
-    <div class="settings-group">
-      <div class="settings-group-title">Verlauf</div>
+    <div class="settings-section" style="border-top:0.5px solid var(--border)">
+      <div class="settings-title">Verlauf</div>
       <div class="settings-row">
-        <span class="settings-label">Gespeicherte Einträge</span>
-        <span class="settings-val" id="settings-history-count">0</span>
+        <span class="settings-row-label">Gespeicherte Einträge</span>
+        <span class="settings-row-val" id="settings-history-count">0</span>
       </div>
-      <button class="settings-btn settings-btn-danger" onclick="clearHistory()">
+      <button onclick="clearHistory()" style="width:100%;margin-top:12px;padding:11px;background:var(--bg2);color:var(--red-text);border:0.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
         <i class="ti ti-trash"></i> Verlauf löschen
       </button>
     </div>
   </div>
-
-  <!-- Tab navigation -->
-  <nav class="tab-nav">
-    <button class="tab-item active" id="tab-scan" onclick="switchTab('scan')">
-      <i class="ti ti-scan"></i><span>Scannen</span>
-    </button>
-    <button class="tab-item" id="tab-history" onclick="switchTab('history')">
-      <i class="ti ti-history"></i><span>Verlauf</span>
-    </button>
-    <button class="tab-item" id="tab-settings" onclick="switchTab('settings')">
-      <i class="ti ti-settings"></i><span>Einstellungen</span>
-    </button>
-  </nav>
-</div>
-
-<!-- Fullscreen Scanner Overlay -->
-<div id="scanner-overlay">
-  <video id="scanner-video" autoplay playsinline muted></video>
-  <div class="scanner-ui">
-    <div class="scanner-top">
-      <span class="scanner-title">Barcode scannen</span>
-      <button class="scanner-close-btn" onclick="stopScanner()"><i class="ti ti-x"></i></button>
+  <!-- Tab-Navigation (unten) -->
+  <div class="tab-nav">
+    <div class="tab-nav-item active" id="tab-scan" onclick="switchTab('scan')">
+      <i class="ti ti-scan" aria-hidden="true"></i>Scannen
     </div>
-    <div class="scanner-frame-area">
-      <div>
-        <div class="scanner-frame">
-          <div class="scanner-frame-bl"></div>
-          <div class="scanner-frame-br"></div>
-          <div class="scanner-line"></div>
-        </div>
-        <div class="scanner-hint">Barcode in den Rahmen halten</div>
-        <div id="scanner-engine" style="color:rgba(255,255,255,0.4);font-size:10px;text-align:center;margin-top:6px"></div>
-      </div>
+    <div class="tab-nav-item" id="tab-aktionen" onclick="switchTab('aktionen')">
+      <i class="ti ti-bolt" aria-hidden="true"></i>Aktionen
     </div>
-    <div class="scanner-bottom">
-      <button class="scanner-action-btn" id="torch-btn" onclick="toggleTorch(this)">
-        <div class="btn-circle"><i class="ti ti-bulb"></i></div>
-        <span>Licht</span>
-      </button>
-      <button class="scanner-action-btn" onclick="stopScanner()">
-        <div class="btn-circle"><i class="ti ti-x"></i></div>
-        <span>Abbrechen</span>
-      </button>
+    <div class="tab-nav-item" id="tab-history" onclick="switchTab('history')">
+      <i class="ti ti-history" aria-hidden="true"></i>Verlauf
+    </div>
+    <div class="tab-nav-item" id="tab-settings" onclick="switchTab('settings')">
+      <i class="ti ti-settings" aria-hidden="true"></i>Einstellungen
     </div>
   </div>
-  <div id="qr-reader" style="display:none"></div>
 </div>
 
+<!-- Aktionsangebote Modal -->
 <div class="aktionen-modal hidden" id="aktionen-modal">
   <div class="aktionen-sheet">
     <div class="aktionen-sheet-header">
@@ -414,6 +445,8 @@
     <div class="aktionen-sheet-body" id="aktionen-list"></div>
   </div>
 </div>
+
+<!-- Standort-Auswahl Modal -->
 <div class="location-modal hidden" id="location-modal">
   <div class="location-sheet">
     <h2>Standort wählen</h2>
@@ -429,836 +462,852 @@
     <button class="location-save" onclick="saveLocation()">Bestätigen</button>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.9.15/dist/index.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill@0.9.21/dist/index.js"></script>
+
+<!-- html5-qrcode: better mobile barcode scanner -->
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
-const SHEET_ID='1qu5AvF6iWvPISBCpYUtiSjdTEqXlQrO0Qtm5-jTVZLE';
-const SHEET_URL=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
-let DATA=[],html5QrCode=null,scanActive=false;
+  // ─── KONFIGURATION ────────────────────────────────────────────────────────
+  const SHEET_ID = '1qu5AvF6iWvPISBCpYUtiSjdTEqXlQrO0Qtm5-jTVZLE';
+  // ─────────────────────────────────────────────────────────────────────────
 
-function setStatus(type,text){
-  const icon=document.getElementById('status-icon');
-  document.getElementById('status-text').textContent=text;
-  icon.className='ti ';
-  if(type==='loading')icon.className+='ti-loader s-loading spinning';
-  else if(type==='ok')icon.className+='ti-circle-check s-ok';
-  else icon.className+='ti-alert-circle s-error';
-}
+  const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
 
-const FIELD_MAP={
-  'artikelnr':'ARTIKELNR','ean':'EAN','name':'NAME','preis':'PREIS',
-  'coppi':'Coppi','zentrallager':'Zentrallager','steglitz':'Steglitz',
-  'freiburg':'Freiburg','hamburg':'Hamburg','master_slave':'MASTER_SLAVE',
-  'uvp':'UVP','marke':'MARKE','kategorie':'KATEGORIE','bild_url':'BILD_URL',
-  'status':'Status','restposten':'Restposten','atlos_url':'ATLOS_URL',
-  'master_model':'MASTER_MODEL','aktionsangebot coppi':'AktionCoppi','aktionsangebot zentrallager':'AktionZentrallager','aktionsangebot steglitz':'AktionSteglitz','aktionsangebot freiburg':'AktionFreiburg','aktionsangebot hamburg':'AktionHamburg','aktionsangebot':'Aktionsangebot'
-};
+  let DATA = [];
+  let html5QrCode = null;
+  let scanActive = false;
 
-function parseCSV(csv){
-  const lines=csv.trim().split('\n');
-  const headers=splitCSVLine(lines[0]).map(h=>FIELD_MAP[h.replace(/^"|"$/g,'').trim().toLowerCase()]||h.replace(/^"|"$/g,'').trim());
-  const rows=[];
-  for(let i=1;i<lines.length;i++){
-    const vals=splitCSVLine(lines[i]);
-    if(!vals.length)continue;
-    const row={};
-    headers.forEach((h,j)=>row[h]=(vals[j]||'').replace(/^"|"$/g,'').trim());
-    rows.push(row);
+  // Status-Anzeige
+  function setStatus(type, text) {
+    const icon = document.getElementById('status-icon');
+    document.getElementById('status-text').textContent = text;
+    icon.className = 'ti ';
+    if (type === 'loading') icon.className += 'ti-loader s-loading spinning';
+    else if (type === 'ok')  icon.className += 'ti-circle-check s-ok';
+    else                     icon.className += 'ti-alert-circle s-error';
   }
-  return rows;
-}
 
-function splitCSVLine(line){
-  const result=[];let cur='',inQ=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){inQ=!inQ;}
-    else if(c===','&&!inQ){result.push(cur);cur='';}
-    else{cur+=c;}
+  // Tab-Navigation
+  function switchTab(tab) {
+    ['scan','aktionen','history','settings'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('pane-' + t).classList.toggle('active', t === tab);
+    });
+    if (tab === 'aktionen') renderAktionenTab();
+    if (tab === 'history')  renderHistory();
+    if (tab === 'settings') renderSettings();
   }
-  result.push(cur);
-  return result;
-}
 
-function getAktion(item){
-  const map={
-    'Coppi':'AktionCoppi','Steglitz':'AktionSteglitz',
-    'Zentrallager':'AktionZentrallager','Freiburg':'AktionFreiburg','Hamburg':'AktionHamburg'
+  function renderAktionenTab() {
+    const aktionen = DATA.filter(r => getAktion(r))
+      .sort((a,b) => (a.NAME||'').localeCompare(b.NAME||'', 'de'));
+    const STOCK_KEYS = ['Coppi','Steglitz','Zentrallager','Freiburg','Hamburg'];
+    const sc = n => n === 0 ? 's0' : n <= 1 ? 'slow' : 'sok';
+    const container = document.getElementById('aktionen-tab-list');
+    if (!aktionen.length) {
+      container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:13px"><i class="ti ti-bolt" style="font-size:40px;display:block;margin-bottom:10px;opacity:0.3"></i>Keine Aktionsangebote gefunden</div>';
+      return;
+    }
+    container.innerHTML = `<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">${aktionen.length} Aktionsangebote</div>` +
+      aktionen.map(item => {
+        const locStk = currentLocation ? (parseInt(item[currentLocation])||0) : STOCK_KEYS.reduce((s,k)=>s+(parseInt(item[k])||0),0);
+        const img = (item.BILD_URL||'').trim();
+        const hasImg = img && img !== 'default.jpg';
+        return `<button class="aktion-list-item" onclick="selectFromAktionen('${item.ARTIKELNR.replace(/'/g,"\'")}')">
+          <div class="aktion-list-img">
+            ${hasImg ? `<img src="https://www.atlantiscloud.de/images/products/mini/${img}" alt="" onerror="this.style.display='none'">` : '<i class="ti ti-photo-off" style="font-size:18px;color:var(--text3);opacity:0.4"></i>'}
+          </div>
+          <div class="aktion-list-info">
+            <div class="aktion-list-name">${escHtml(item.NAME||item.ARTIKELNR)}</div>
+            <div class="aktion-list-nr">${escHtml(item.ARTIKELNR)}</div>
+            <div class="aktion-list-tag"><i class="ti ti-bolt" style="font-size:10px"></i> ${escHtml(getAktion(item))}</div>
+          </div>
+          <div class="aktion-list-stock">
+            <div class="aktion-list-stk ${sc(locStk)}">${locStk} Stk.</div>
+            <div class="aktion-list-loc">${currentLocation||'Gesamt'}</div>
+          </div>
+        </button>`;
+      }).join('');
+  }
+
+  // Scan-Verlauf
+  let scanHistory = JSON.parse(localStorage.getItem('atl_history') || '[]');
+
+  function addToHistory(item) {
+    scanHistory = scanHistory.filter(h => h.nr !== item.ARTIKELNR);
+    scanHistory.unshift({ nr: item.ARTIKELNR, name: item.NAME, img: item.BILD_URL, time: Date.now() });
+    if (scanHistory.length > 30) scanHistory = scanHistory.slice(0, 30);
+    localStorage.setItem('atl_history', JSON.stringify(scanHistory));
+    updateSettingsHistoryCount();
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    if (!scanHistory.length) {
+      list.innerHTML = '<div class="history-empty"><i class="ti ti-history"></i><p>Noch keine Artikel gescannt</p></div>';
+      return;
+    }
+    list.innerHTML = scanHistory.map(h => {
+      const img = (h.img||'').trim();
+      const hasImg = img && img !== 'default.jpg';
+      const ago = timeAgo(h.time);
+      return `<div class="history-item" onclick="loadFromHistory('${h.nr.replace(/'/g,"\'")}')">
+        <div class="history-img">
+          ${hasImg ? `<img src="https://www.atlantiscloud.de/images/products/mini/${img}" alt="" onerror="this.style.display='none'">` : '<i class="ti ti-photo-off" style="font-size:16px;color:var(--text3);opacity:0.4"></i>'}
+        </div>
+        <div class="history-info">
+          <div class="history-name">${escHtml(h.name||h.nr)}</div>
+          <div class="history-nr">${escHtml(h.nr)}</div>
+        </div>
+        <div class="history-time">${ago}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function loadFromHistory(nr) {
+    switchTab('scan');
+    const item = findArticle(nr);
+    if (item) {
+      document.getElementById('search-input').value = nr;
+      renderResult(item);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function clearHistory() {
+    if (!confirm('Verlauf wirklich löschen?')) return;
+    scanHistory = [];
+    localStorage.removeItem('atl_history');
+    renderHistory();
+    updateSettingsHistoryCount();
+  }
+
+  function timeAgo(ts) {
+    const diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 60) return 'Gerade eben';
+    if (diff < 3600) return Math.floor(diff/60) + ' Min.';
+    if (diff < 86400) return Math.floor(diff/3600) + ' Std.';
+    return Math.floor(diff/86400) + ' Tage';
+  }
+
+  function renderSettings() {
+    const locEl = document.getElementById('settings-loc-val');
+    if (locEl) locEl.innerHTML = (currentLocation || 'Nicht gewählt') + ' <i class="ti ti-chevron-right" style="font-size:14px;color:var(--text3)"></i>';
+    updateSettingsHistoryCount();
+    const timeEl = document.getElementById('settings-time');
+    if (timeEl && lastLoadTime) timeEl.textContent = lastLoadTime;
+    const cntEl = document.getElementById('settings-count');
+    if (cntEl) cntEl.textContent = DATA.length ? DATA.length + ' Artikel' : '—';
+  }
+
+  function updateSettingsHistoryCount() {
+    const el = document.getElementById('settings-history-count');
+    if (el) el.textContent = scanHistory.length;
+  }
+
+  let lastLoadTime = '';
+
+  // CSV-Parser (robust gegen Kommas in Anführungszeichen)
+  // Canonical field name map — maps any casing variant to the key used in code
+  const FIELD_MAP = {
+    'artikelnr': 'ARTIKELNR', 'ean': 'EAN', 'name': 'NAME', 'preis': 'PREIS',
+    'coppi': 'Coppi', 'zentrallager': 'Zentrallager', 'steglitz': 'Steglitz',
+    'freiburg': 'Freiburg', 'hamburg': 'Hamburg',
+    'master_slave': 'MASTER_SLAVE', 'uvp': 'UVP', 'marke': 'MARKE',
+    'kategorie': 'KATEGORIE', 'bild_url': 'BILD_URL',
+    'status': 'Status', 'restposten': 'Restposten',
+    'atlos_url': 'ATLOS_URL', 'master_model': 'MASTER_MODEL',
+    'aktionsangebot coppi': 'AktionCoppi',
+    'aktionsangebot zentrallager': 'AktionZentrallager',
+    'aktionsangebot steglitz': 'AktionSteglitz',
+    'aktionsangebot freiburg': 'AktionFreiburg',
+    'aktionsangebot hamburg': 'AktionHamburg',
+    'aktionsangebot': 'Aktionsangebot'
   };
-  // Use location-specific field if available, fall back to generic
-  const locField = currentLocation && map[currentLocation] ? map[currentLocation] : null;
-  const locVal = locField && item[locField] ? item[locField].trim() : '';
-  const genVal = item.Aktionsangebot ? item.Aktionsangebot.trim() : '';
-  return locVal || genVal;
-}
 
-async function loadData(){
-  setStatus('loading','Daten werden geladen…');
-  document.getElementById('scan-btn').disabled=true;document.getElementById('scan-btn-live').disabled=true;
-  try{
-    const res=await fetch(SHEET_URL);
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const text=await res.text();
-    DATA=parseCSV(text).filter(r=>r.ARTIKELNR&&r.ARTIKELNR.length>0);
-    const time=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
-    lastLoadTime=time;setStatus('ok',`${DATA.length} Artikel · ${time}`);
-    updateAktionenBanner();
-    document.getElementById('scan-btn').disabled=false;document.getElementById('scan-btn-live').disabled=false;
-  }catch(e){
-    setStatus('error','Ladefehler — Tabelle öffentlich freigegeben?');
-    document.getElementById('scan-btn').disabled=false;document.getElementById('scan-btn-live').disabled=false;
+  function parseCSV(csv) {
+    const lines = csv.trim().split('\n');
+    const rawHeaders = splitCSVLine(lines[0]).map(h => h.replace(/^"|"$/g, '').trim());
+    // Normalize headers via FIELD_MAP (case-insensitive lookup)
+    const headers = rawHeaders.map(h => FIELD_MAP[h.toLowerCase()] || h);
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const vals = splitCSVLine(lines[i]);
+      if (!vals.length) continue;
+      const row = {};
+      headers.forEach((h, j) => row[h] = (vals[j] || '').replace(/^"|"$/g, '').trim());
+      rows.push(row);
+    }
+    return rows;
   }
-}
 
-function findArticle(query){
-  const q=query.trim().toLowerCase();
-  return DATA.find(r=>r.EAN===q||r.ARTIKELNR.toLowerCase()===q);
-}
-
-function searchArticles(query){
-  const terms=query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  if(!terms.length)return[];
-  return DATA.filter(r=>{
-    const h=[(r.ARTIKELNR||''),(r.NAME||''),(r.EAN||''),(r.MARKE||'')].join(' ').toLowerCase();
-    return terms.every(t=>h.includes(t));
-  }).slice(0,50);
-}
-
-function renderList(items,query){
-  const q=query.trim().toLowerCase();
-  const STOCK_KEYS=['Coppi','Steglitz','Zentrallager','Freiburg','Hamburg'];
-  const total=r=>STOCK_KEYS.reduce((s,k)=>s+(parseInt(r[k])||0),0);
-  const sc=n=>n===0?'s0':n<=1?'slow':'sok';
-  function hl(text){
-    if(!q)return escHtml(text);
-    const idx=text.toLowerCase().indexOf(q);
-    if(idx===-1)return escHtml(text);
-    return escHtml(text.slice(0,idx))+'<em>'+escHtml(text.slice(idx,idx+q.length))+'</em>'+escHtml(text.slice(idx+q.length));
+  function splitCSVLine(line) {
+    const result = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+      else { cur += c; }
+    }
+    result.push(cur);
+    return result;
   }
-  const rows=items.map(item=>{
-    const stk=total(item);
-    const locStk=currentLocation?(parseInt(item[currentLocation])||0):stk;
-    const img=(item.BILD_URL||'').trim();
-    const hasImg=img&&img!=='default.jpg';
-    const imgHtml=hasImg?`<img src="https://www.atlantiscloud.de/images/products/mini/${escHtml(img)}" alt="" onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\\'ti ti-photo-off\\'></i>'">`:'<i class="ti ti-photo-off"></i>';
-    const hasAktion=getAktion(item);
-    return `<button class="result-row" onclick="selectResult('${item.ARTIKELNR.replace(/'/g,"\\'")}')">
-      <div class="result-row-img">${imgHtml}</div>
-      <div class="result-row-info">
-        <div class="result-row-name">${hl(item.NAME||item.ARTIKELNR)}</div>
-        <div class="result-row-sub">${escHtml(item.ARTIKELNR)}</div>
-        ${hasAktion?`<div style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;font-weight:700;color:#E65100;background:#FFE69C;border:1px solid #FFCA28;border-radius:20px;padding:2px 8px"><i class="ti ti-bolt" style="font-size:11px"></i> ${escHtml(getAktion(item))}</div>`:''}
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <span style="font-size:13px;font-weight:700" class="${sc(locStk)}">${locStk} Stk.</span>
-        ${currentLocation?`<div style="font-size:10px;color:var(--text3);margin-top:1px">${currentLocation}</div>`:''}
-      </div>
-    </button>`;
-  }).join('');
-  document.getElementById('result-area').innerHTML=`<div class="results-list"><div class="results-header">${items.length} Treffer für „${escHtml(query)}"</div>${rows}</div>`;
-}
 
-function selectResult(artikelnr){
-  const item=findArticle(artikelnr);
-  if(item){document.getElementById('search-input').value=artikelnr;renderResult(item);window.scrollTo({top:0,behavior:'smooth'});}
-}
+  // Daten von Google Sheets laden
+  function getAktion(item){
+    const map={
+      'Coppi':'AktionCoppi','Steglitz':'AktionSteglitz',
+      'Zentrallager':'AktionZentrallager','Freiburg':'AktionFreiburg','Hamburg':'AktionHamburg'
+    };
+    const locField = currentLocation && map[currentLocation] ? map[currentLocation] : null;
+    const locVal = locField && item[locField] ? item[locField].trim() : '';
+    const genVal = item.Aktionsangebot ? item.Aktionsangebot.trim() : '';
+    return locVal || genVal;
+  }
 
-function stockColor(n){return n===0?'s0':n<=1?'slow':'sok';}
+  async function loadData() {
+    setStatus('loading', 'Daten werden geladen…');
+    document.getElementById('scan-btn').disabled = true;
+    try {
+      const res = await fetch(SHEET_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      DATA = parseCSV(text).filter(r => r.ARTIKELNR && r.ARTIKELNR.length > 0);
+      const time = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      lastLoadTime = time;
+      setStatus('ok', `${DATA.length} Artikel · ${time}`);
+      updateAktionenBanner();
+      document.getElementById('scan-btn').disabled = false;
+    } catch (e) {
+      setStatus('error', 'Ladefehler — Tabelle öffentlich freigegeben?');
+      document.getElementById('scan-btn').disabled = false;
+      console.error(e);
+    }
+  }
 
-function renderResult(item){
-  addToHistory(item);
-  const isRestposten=(item.Restposten||'').trim().toUpperCase()==='JA';
-  const isActive=(item.Status||'').trim().toUpperCase()==='JA';
-  const statusClass=isActive?'badge-active':'badge-inactive';
-  const preis=parseFloat((item.PREIS||'0').replace(',','.'))||0;
-  const uvp=parseFloat((item.UVP||'0').replace(',','.'))||0;
-  const savingPct=(uvp>preis&&preis>0)?Math.round((1-preis/uvp)*100):0;
-  const kat=(item.KATEGORIE||'').replace(/^\d+ - /,'');
-  const marke=(item.MARKE||'').split(' - ')[0];
-  const mainLocs=[
-    {name:'Coppi',val:parseInt(item.Coppi)||0},
-    {name:'Steglitz',val:parseInt(item.Steglitz)||0},
-    {name:'Zentrallager',val:parseInt(item.Zentrallager)||0},
-    {name:'Freiburg',val:parseInt(item.Freiburg)||0},
-    {name:'Hamburg',val:parseInt(item.Hamburg)||0},
-  ];
-  const total=mainLocs.reduce((s,l)=>s+l.val,0);
-  const hasImg=item.BILD_URL&&item.BILD_URL.trim()!==''&&item.BILD_URL!=='default.jpg';
-  const imgSrc=hasImg?`https://www.atlantiscloud.de/images/products/normal/${item.BILD_URL.trim()}`:'';
-  const atlosUrl=(item.ATLOS_URL||'').trim();
-  document.getElementById('result-area').innerHTML=`
-    <div class="result-card">
-      <div class="result-header" style="margin-bottom:12px">
-        <div class="result-name">${escHtml(item.NAME||'Unbekannter Artikel')}</div>
-        <span class="badge ${statusClass}">${isActive?'Aktiv':'Inaktiv'}</span>
-      </div>
-      ${isRestposten?`<div class="restposten-banner" style="margin-bottom:12px"><i class="ti ti-tag"></i> Restposten — reduzierter Abverkauf</div>`:''}
-      ${getAktion(item)?`
-      <div class="aktion-banner">
-        <i class="ti ti-bolt"></i>
-        <div class="aktion-banner-text">
-          <div class="aktion-banner-label">⚡ Aktionsangebot</div>
-          <div class="aktion-banner-msg">${escHtml(getAktion(item))}</div>
+  // Exakte Suche (EAN oder Artikelnummer) — für Scanner
+  function findArticle(query) {
+    const q = query.trim().toLowerCase();
+    return DATA.find(r =>
+      r.EAN === q ||
+      r.ARTIKELNR.toLowerCase() === q
+    );
+  }
+
+  // Mehrwort-Volltextsuche — jeder Begriff muss irgendwo in Name, Artikelnr oder EAN vorkommen
+  function searchArticles(query) {
+    const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return [];
+    return DATA.filter(r => {
+      const haystack = [
+        (r.ARTIKELNR || '').toLowerCase(),
+        (r.NAME      || '').toLowerCase(),
+        (r.EAN       || '').toLowerCase(),
+        (r.MARKE     || '').toLowerCase(),
+      ].join(' ');
+      return terms.every(t => haystack.includes(t));
+    }).slice(0, 50);
+  }
+
+  // Treffer-Liste rendern
+  function renderList(items, query) {
+    const q = query.trim().toLowerCase();
+    const STOCK_KEYS = ['Coppi','Steglitz','Zentrallager','Freiburg','Hamburg'];
+    const total = r => STOCK_KEYS.reduce((s,k) => s + (parseInt(r[k])||0), 0);
+    const sc = n => n === 0 ? 's0' : n <= 1 ? 'slow' : 'sok';
+
+    // Highlight matching text
+    function hl(text) {
+      if (!q) return escHtml(text);
+      const idx = text.toLowerCase().indexOf(q);
+      if (idx === -1) return escHtml(text);
+      return escHtml(text.slice(0, idx))
+        + '<em>' + escHtml(text.slice(idx, idx + q.length)) + '</em>'
+        + escHtml(text.slice(idx + q.length));
+    }
+
+    const rows = items.map(item => {
+      const stk = total(item);
+      const locStk = currentLocation ? (parseInt(item[currentLocation]) || 0) : stk;
+      const locLabel = currentLocation ? currentLocation : 'Gesamt';
+      const img = (item.BILD_URL || '').trim();
+      const hasImg = img && img !== 'default.jpg';
+      const imgHtml = hasImg
+        ? `<img src="https://www.atlantiscloud.de/images/products/mini/${escHtml(img)}" alt="" onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\'ti ti-photo-off\'></i>'">`
+        : '<i class="ti ti-photo-off"></i>';
+      const hasAktion = getAktion(item);
+      return `<button class="result-row" onclick="selectResult('${item.ARTIKELNR.replace(/'/g,"\'")}')">
+        <div class="result-row-img">${imgHtml}</div>
+        <div class="result-row-info">
+          <div class="result-row-name">${hl(item.NAME || item.ARTIKELNR)}</div>
+          <div class="result-row-sub">${escHtml(item.ARTIKELNR)}</div>
+          ${hasAktion ? `<div style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;font-weight:700;color:#E65100;background:#FFE69C;border:1px solid #FFCA28;border-radius:20px;padding:2px 8px"><i class="ti ti-bolt" style="font-size:11px"></i> ${escHtml(getAktion(item))}</div>` : ''}
         </div>
-      </div>`:''}
-      <div class="article-top-row">
-        <div class="article-img-col">
-          ${hasImg?(atlosUrl
-            ?`<a href="${escHtml(atlosUrl)}" target="_blank" style="display:block;width:100%;height:100%"><img src="${escHtml(imgSrc)}" alt="Produktbild" style="width:100%;height:100%;object-fit:contain;padding:6px" onerror="this.parentNode.innerHTML='<div class=\\'img-placeholder\\'><i class=\\'ti ti-photo-off\\'></i><span>Kein Bild</span></div>'"></a>`
-            :`<img src="${escHtml(imgSrc)}" alt="Produktbild" onerror="this.parentNode.innerHTML='<div class=\\'img-placeholder\\'><i class=\\'ti ti-photo-off\\'></i><span>Kein Bild</span></div>'">`)
-            :'<div class="img-placeholder"><i class="ti ti-photo-off"></i><span>Kein Bild</span></div>'}
-        </div>
-        <div class="article-meta-col">
-          <div>
-            <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px">Artikelnr.</div>
-            <div style="display:flex;align-items:center;gap:4px">
-              ${atlosUrl?`<a href="${escHtml(atlosUrl)}" target="_blank" class="article-artikelnr" style="color:var(--blue);text-decoration:none"><i class="ti ti-external-link" style="font-size:10px;margin-right:3px"></i>${escHtml(item.ARTIKELNR)}</a>`:`<span class="article-artikelnr">${escHtml(item.ARTIKELNR)}</span>`}
-              <button class="copy-btn" onclick="copyArticleNr('${item.ARTIKELNR.replace(/'/g,"\\'")}',this)" title="Kopieren"><i class="ti ti-copy"></i></button>
-            </div>
-          </div>
-          ${item.EAN?`<div><div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px">EAN</div><div class="article-ean">${escHtml(item.EAN)}</div></div>`:''}
-          <div class="price-row" style="margin-bottom:0">
-            ${preis>0?`<span class="price-main" style="font-size:20px">€ ${preis.toFixed(2).replace('.',',')}</span>`:`<span style="font-size:14px;color:var(--text3)">Kein Preis</span>`}
-            ${uvp>preis&&preis>0?`<span class="price-uvp">UVP € ${uvp.toFixed(2).replace('.',',')}</span>`:''}
-            ${savingPct>0?`<span class="price-saving">-${savingPct} %</span>`:''}
-          </div>
-          <div class="meta-row" style="margin-bottom:0">
-            ${kat?`<span class="chip"><i class="ti ti-category"></i>${escHtml(kat)}</span>`:''}
-            ${marke?`<span class="chip"><i class="ti ti-building-store"></i>${escHtml(marke)}</span>`:''}
-            <span class="chip"><i class="ti ti-package"></i>Gesamt: ${total}</span>
-          </div>
-        </div>
-      </div>
-      <div class="section-label">Bestand nach Standort</div>
-      <div class="stock-grid">
-        ${mainLocs.map(l=>`<div class="stock-item ${locHighlight(l.name,'highlight')}">
-          <div class="stock-loc">${l.name}${currentLocation===l.name?' <span style="font-size:9px;opacity:0.7">(hier)</span>':''}</div>
-          <div class="stock-num ${stockColor(l.val)}">${l.val}</div>
-        </div>`).join('')}
-      </div>
-      ${buildVariantsHTML(item)}
-    </div>`;
-}
-
-function buildVariantsHTML(item){
-  const role=(item.MASTER_SLAVE||'').trim().toUpperCase();
-  const masterModel=(item.MASTER_MODEL||'').trim();
-  const STOCK_KEYS=['Coppi','Steglitz','Zentrallager','Freiburg','Hamburg'];
-  const totalStock=r=>STOCK_KEYS.reduce((s,k)=>s+(parseInt(r[k])||0),0);
-  const sc=n=>n===0?'s0':n<=1?'slow':'sok';
-  let siblings=[];
-  if(role==='S'&&masterModel)siblings=DATA.filter(r=>(r.MASTER_MODEL||'').trim()===masterModel&&r.ARTIKELNR!==item.ARTIKELNR);
-  else if(role==='M')siblings=DATA.filter(r=>(r.MASTER_MODEL||'').trim()===item.ARTIKELNR);
-  if(!siblings.length)return'';
-  const renderVariant=s=>{
-    const stk=totalStock(s);
-    const url=(s.ATLOS_URL||'').trim();
-    const img=(s.BILD_URL||'').trim();
-    const imgUrl=(img&&img!=='default.jpg')?'https://www.atlantiscloud.de/images/products/mini/'+img:'';
-    const preis=parseFloat((s.PREIS||'0').replace(',','.'))||0;
-    const uvp=parseFloat((s.UVP||'0').replace(',','.'))||0;
-    const savPct=(uvp>preis&&preis>0)?Math.round((1-preis/uvp)*100):0;
-    const isRp=(s.Restposten||'').trim().toUpperCase()==='JA';
-    const vIsActive=(s.Status||'').trim().toUpperCase()==='JA';
-    const mainLocs=[
-      {name:'Coppi',val:parseInt(s.Coppi)||0},{name:'Steglitz',val:parseInt(s.Steglitz)||0},
-      {name:'Zentrallager',val:parseInt(s.Zentrallager)||0},{name:'Freiburg',val:parseInt(s.Freiburg)||0},
-      {name:'Hamburg',val:parseInt(s.Hamburg)||0}
-    ];
-    const vLocStk=currentLocation?(parseInt(s[currentLocation])||0):stk;
-    const vLocScs=vLocStk===0?'s0':vLocStk<=1?'slow':'sok';
-    return `<details class="variant-details" open>
-      <summary class="variant-summary">
-        <span class="variant-summary-left">
-          <span class="variant-name">${escHtml(s.NAME)}</span>
-          <span style="display:inline-flex;gap:4px;margin-top:2px;flex-wrap:wrap">
-            <span class="badge ${vIsActive?'badge-active':'badge-inactive'}" style="font-size:10px;padding:1px 7px">${vIsActive?'Aktiv':'Inaktiv'}</span>
-            ${isRp?'<span class="badge badge-outlet" style="font-size:10px;padding:1px 7px">Restposten</span>':''}
-            ${getAktion(s)?`<span class="aktion-chip"><i class="ti ti-bolt" style="font-size:10px"></i> Aktion</span>`:''}
-          </span>
-        </span>
         <div style="text-align:right;flex-shrink:0">
-          <span class="variant-stock ${vLocScs}">${vLocStk} Stk.</span>
-          ${currentLocation?`<div style="font-size:10px;color:var(--text3);margin-top:1px">${currentLocation}</div>`:''}
+          <span class="result-row-stock ${sc(locStk)}">${locStk} Stk.</span>
+          ${currentLocation ? `<div style="font-size:10px;color:var(--text3);margin-top:1px">${locLabel}</div>` : ''}
         </div>
-        <i class="ti ti-chevron-down variant-chevron" aria-hidden="true"></i>
-      </summary>
-      <div class="variant-body">
-        <div class="variant-top-row">
-          ${imgUrl?`<a href="${escHtml(url)}" target="_blank" class="variant-img-link"><img src="${escHtml(imgUrl)}" alt="Produktbild" onerror="this.style.display='none'"></a>`:''}
-          <div class="variant-info">
-            <div style="display:flex;align-items:center;gap:4px">
-              <a href="${escHtml(url)}" target="_blank" class="variant-artikelnr-link"><i class="ti ti-external-link" style="font-size:11px;margin-right:3px"></i>${escHtml(s.ARTIKELNR)}</a>
-              <button class="copy-btn" onclick="copyArticleNr('${s.ARTIKELNR.replace(/'/g,"\\'")}',this)" title="Kopieren"><i class="ti ti-copy"></i></button>
-            </div>
-            <div class="variant-price-row">
-              ${preis>0?`<span class="variant-price-main">€ ${preis.toFixed(2).replace('.',',')}</span>`:`<span style="font-size:13px;color:var(--text3)">Kein Preis</span>`}
-              ${uvp>preis&&preis>0?`<span class="variant-price-uvp">UVP € ${uvp.toFixed(2).replace('.',',')}</span>`:''}
-              ${savPct>0?`<span class="variant-price-saving">-${savPct} %</span>`:''}
-            </div>
-          </div>
+      </button>`;
+    }).join('');
+
+    // Add to scan history
+    addToHistory(item);
+    document.getElementById('result-area').innerHTML = `
+      <div class="results-list">
+        <div class="results-header">${items.length} Treffer für „${escHtml(query)}"</div>
+        ${rows}
+      </div>`;
+  }
+
+  function selectResult(artikelnr) {
+    const item = findArticle(artikelnr);
+    if (item) {
+      document.getElementById('search-input').value = artikelnr;
+      renderResult(item);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // Bestandsfarbe
+  function stockColor(n) {
+    if (n === 0) return 's0';
+    if (n <= 1)  return 'slow';
+    return 'sok';
+  }
+
+  // Artikel-Karte rendern
+  function renderResult(item) {
+    const isRestposten = (item.Restposten || '').trim().toUpperCase() === 'JA';
+    const statusRaw    = (item.Status || '').trim();
+    const isActive     = statusRaw.toUpperCase() === 'JA';
+    const statusLabel  = isActive ? 'Aktiv' : 'Inaktiv';
+    const statusClass  = isActive ? 'badge-active' : 'badge-inactive';
+
+    const preis = parseFloat((item.PREIS || '0').replace(',', '.')) || 0;
+    const uvp   = parseFloat((item.UVP   || '0').replace(',', '.')) || 0;
+    const savingPct = (uvp > preis && preis > 0) ? Math.round((1 - preis / uvp) * 100) : 0;
+
+    // Kategorie-Text bereinigen (z.B. "10102010 - Geräteflossen" → "Geräteflossen")
+    const kat = (item.KATEGORIE || '').replace(/^\d+ - /, '');
+    const marke = (item.MARKE || '').split(' - ')[0]; // nur erster Teil
+
+    const mainLocs = [
+      { name: 'Coppi',        val: parseInt(item.Coppi)        || 0 },
+      { name: 'Steglitz',     val: parseInt(item.Steglitz)     || 0 },
+      { name: 'Zentrallager', val: parseInt(item.Zentrallager) || 0 },
+      { name: 'Freiburg',     val: parseInt(item.Freiburg)     || 0 },
+      { name: 'Hamburg',      val: parseInt(item.Hamburg)      || 0 },
+    ];
+    const extraLocs = [];
+    const locs = mainLocs;
+    const total = locs.reduce((s, l) => s + l.val, 0);
+    const extraTotal = 0;
+
+    const hasImg = item.BILD_URL && item.BILD_URL.trim() !== '' && item.BILD_URL !== 'default.jpg';
+    const imgSrc  = hasImg ? `https://www.atlantiscloud.de/images/products/normal/${item.BILD_URL.trim()}` : '';
+    const atlosUrl = (item.ATLOS_URL || '').trim();
+
+    document.getElementById('result-area').innerHTML = `
+      <div class="result-card">
+
+        <!-- 1. Artikelname + Status-Badge -->
+        <div class="result-header" style="margin-bottom:12px">
+          <div class="result-name">${escHtml(item.NAME || 'Unbekannter Artikel')}</div>
+          <span class="badge ${statusClass}">${statusLabel}</span>
         </div>
-        ${getAktion(s)?`
-        <div class="aktion-banner" style="padding:8px 10px;margin-bottom:0">
-          <i class="ti ti-bolt" style="font-size:16px;color:#E65100;flex-shrink:0"></i>
+
+        <!-- 2. Restposten-Banner (nur wenn JA) -->
+        ${isRestposten ? `
+          <div class="restposten-banner" style="margin-bottom:12px">
+            <i class="ti ti-tag"></i> Restposten — reduzierter Abverkauf
+          </div>` : ''}
+
+        <!-- Aktionsangebot Banner -->
+        ${getAktion(item) ? `
+        <div class="aktion-banner">
+          <i class="ti ti-bolt"></i>
           <div class="aktion-banner-text">
-            <div class="aktion-banner-label">Aktionsangebot</div>
-            <div class="aktion-banner-msg">${escHtml(getAktion(s))}</div>
+            <div class="aktion-banner-label">⚡ Aktionsangebot</div>
+            <div class="aktion-banner-msg">${escHtml(getAktion(item))}</div>
           </div>
-        </div>`:''}
-        <div class="variant-stock-mini">
-          ${mainLocs.map(l=>`<div class="vsitem ${locHighlight(l.name,'highlight')}"><div class="vsloc">${l.name}</div><div class="vsnum ${sc(l.val)}">${l.val}</div></div>`).join('')}
+        </div>` : ''}
+
+        <!-- 3. Bild links, Artikelnr + EAN + Preis rechts -->
+        <div class="article-top-row">
+          <div class="article-img-col">
+            ${hasImg
+              ? (atlosUrl
+                  ? `<a href="${escHtml(atlosUrl)}" target="_blank" style="display:block;width:100%;height:100%"><img src="${escHtml(imgSrc)}" alt="Produktbild" style="width:100%;height:100%;object-fit:contain;padding:6px"
+                       onerror="this.parentNode.innerHTML='<div class=\'img-placeholder\'><i class=\'ti ti-photo-off\'></i><span>Kein Bild</span></div>'"></a>`
+                  : `<img src="${escHtml(imgSrc)}" alt="Produktbild"
+                       onerror="this.parentNode.innerHTML='<div class=\'img-placeholder\'><i class=\'ti ti-photo-off\'></i><span>Kein Bild</span></div>'">`)
+              : '<div class="img-placeholder"><i class="ti ti-photo-off"></i><span>Kein Bild</span></div>'}
+          </div>
+          <div class="article-meta-col">
+            <div>
+              <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px">Artikelnr.</div>
+              <div style="display:flex;align-items:center;gap:4px">
+                ${atlosUrl
+                  ? `<a href="${escHtml(atlosUrl)}" target="_blank" class="article-artikelnr" style="color:var(--blue);text-decoration:none"><i class="ti ti-external-link" style="font-size:10px;margin-right:3px"></i>${escHtml(item.ARTIKELNR)}</a>`
+                  : `<span class="article-artikelnr">${escHtml(item.ARTIKELNR)}</span>`}
+                <button class="copy-btn" onclick="copyArticleNr('${item.ARTIKELNR.replace(/'/g,"\'")}', this)" title="Artikelnummer kopieren"><i class="ti ti-copy"></i></button>
+              </div>
+            </div>
+            ${item.EAN ? `<div>
+              <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px">EAN</div>
+              <div class="article-ean">${escHtml(item.EAN)}</div>
+            </div>` : ''}
+            <div class="price-row" style="margin-bottom:0">
+              ${preis > 0
+                ? `<span class="price-main" style="font-size:20px">€&nbsp;${preis.toFixed(2).replace('.', ',')}</span>`
+                : `<span class="price-main" style="font-size:14px;color:var(--text3)">Kein Preis</span>`}
+              ${uvp > preis && preis > 0
+                ? `<span class="price-uvp">UVP&nbsp;€&nbsp;${uvp.toFixed(2).replace('.', ',')}</span>` : ''}
+              ${savingPct > 0
+                ? `<span class="price-saving">-${savingPct}&nbsp;%</span>` : ''}
+            </div>
+            <div class="meta-row" style="margin-bottom:0">
+              ${kat   ? `<span class="chip"><i class="ti ti-category"></i>${escHtml(kat)}</span>` : ''}
+              ${marke ? `<span class="chip"><i class="ti ti-building-store"></i>${escHtml(marke)}</span>` : ''}
+              <span class="chip"><i class="ti ti-package"></i>Gesamt: ${total}</span>
+            </div>
+          </div>
         </div>
-      </div>
-    </details>`;
-  };
-  let html='<div class="variants-section"><div class="divider-thin"></div>';
-  html+='<div class="variants-label">Weitere Varianten dieser Artikelgruppe ('+siblings.length+')</div>';
-  siblings.sort((a,b)=>(a.NAME||'').localeCompare(b.NAME||'','de')).forEach(s=>{html+=renderVariant(s);});
-  html+='</div>';
-  return html;
-}
 
-function doSearch(){
-  const q=document.getElementById('search-input').value.trim();
-  if(!q)return;
-  if(!DATA.length){showError('Daten noch nicht geladen.');return;}
-  const exact=findArticle(q);
-  if(exact){renderResult(exact);return;}
-  const results=searchArticles(q);
-  if(results.length===1)renderResult(results[0]);
-  else if(results.length>1)renderList(results,q);
-  else showError('Kein Artikel gefunden für: '+q);
-}
+        <!-- 4. Bestand nach Standort -->
+        <div class="section-label">Bestand nach Standort</div>
+        <div class="stock-grid">
+          ${mainLocs.map(l => `
+            <div class="stock-item ${locHighlight(l.name, 'highlight')}">
+              <div class="stock-loc">${l.name}${currentLocation === l.name ? ' <span style="font-size:10px;opacity:0.7">(hier)</span>' : ''}</div>
+              <div class="stock-num ${stockColor(l.val)}">${l.val}</div>
+            </div>`).join('')}
+        </div>
+        <details class="stock-details" ${['Freiburg','Hamburg'].includes(currentLocation) ? 'open' : ''}>
+          <summary>
+            <span>Freiburg &amp; Hamburg${extraTotal > 0 ? ` · Gesamt: ${extraTotal}` : ' · kein Bestand'}</span>
+            <i class="ti ti-chevron-down chevron"></i>
+          </summary>
+          <div class="stock-details-inner">
+            ${extraLocs.map(l => `
+              <div class="stock-item ${locHighlight(l.name, 'highlight')}">
+                <div class="stock-loc">${l.name}${currentLocation === l.name ? ' <span style="font-size:10px;opacity:0.7">(hier)</span>' : ''}</div>
+                <div class="stock-num ${stockColor(l.val)}">${l.val}</div>
+              </div>`).join('')}
+          </div>
+        </details>
 
-function onInput(val){
-  const q=val.trim();
-  if(!DATA.length||q.length<3)return;
-  if(q.length>=6){const exact=findArticle(q);if(exact){renderResult(exact);return;}}
-  const results=searchArticles(q);
-  if(results.length===1)renderResult(results[0]);
-  else if(results.length>1&&results.length<=50)renderList(results,q);
-}
-
-let torchTrack=null;
-let scanAnimFrame=null;
-
-async function startScanner(){
-  if(location.protocol!=='https:'&&location.hostname!=='localhost'){
-    showError('Kamera benötigt HTTPS.');return;
+        ${buildVariantsHTML(item)}
+      </div>`;
   }
-  scanActive=true;
-  const overlay=document.getElementById('scanner-overlay');
-  const video=document.getElementById('scanner-video');
-  overlay.classList.add('active');
-  document.body.style.overflow='hidden';
 
-  try{
-    // iOS Safari needs specific constraints - avoid overly strict ones
-    let stream;
-    try{
-      // First try: ideal rear cam with good resolution
-      stream=await navigator.mediaDevices.getUserMedia({video:{
-        facingMode:{ideal:'environment'},
-        width:{ideal:1280},height:{ideal:720}
-      }});
-    }catch(e){
-      // Fallback: just rear camera, no resolution constraint
-      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+  function buildVariantsHTML(item) {
+    const role        = (item.MASTER_SLAVE  || '').trim().toUpperCase();
+    const masterModel = (item.MASTER_MODEL  || '').trim();
+    const STOCK_KEYS  = ['Coppi','Steglitz','Zentrallager','Freiburg','Hamburg'];
+    const totalStock  = r => STOCK_KEYS.reduce((s,k) => s + (parseInt(r[k]) || 0), 0);
+    const sc          = n => n === 0 ? 's0' : n <= 1 ? 'slow' : 'sok';
+
+    let siblings = [];
+    if (role === 'S' && masterModel) {
+      siblings = DATA.filter(r =>
+        (r.MASTER_MODEL || '').trim() === masterModel &&
+        r.ARTIKELNR !== item.ARTIKELNR
+      );
+    } else if (role === 'M') {
+      siblings = DATA.filter(r =>
+        (r.MASTER_MODEL || '').trim() === item.ARTIKELNR
+      );
     }
-    video.srcObject=stream;
-    await video.play();
-    torchTrack=stream.getVideoTracks()[0];
+    if (siblings.length === 0) return '';
 
-    // Log actual camera capabilities for debugging
-    const settings=torchTrack.getSettings();
-    console.log('Camera:',settings.width+'x'+settings.height,'facing:',settings.facingMode);
+    const renderVariant = s => {
+      const stk  = totalStock(s);
+      const scs  = sc(stk);
+      const url      = (s.ATLOS_URL  || '').trim();
+      const img      = (s.BILD_URL   || '').trim();
+      const imgUrl   = (img && img !== 'default.jpg')
+        ? 'https://www.atlantiscloud.de/images/products/mini/' + img : '';
+      const preis    = parseFloat((s.PREIS || '0').replace(',', '.')) || 0;
+      const uvp      = parseFloat((s.UVP   || '0').replace(',', '.')) || 0;
+      const savPct   = (uvp > preis && preis > 0) ? Math.round((1 - preis / uvp) * 100) : 0;
+      const isRp     = (s.Restposten || '').trim().toUpperCase() === 'JA';
+      const isInactive = (s.Status || '').trim() === '0' || (s.Status || '').trim().toUpperCase() !== 'JA';
+      const mainLocs = [
+        { name: 'Coppi',        val: parseInt(s.Coppi)        || 0 },
+        { name: 'Steglitz',     val: parseInt(s.Steglitz)     || 0 },
+        { name: 'Zentrallager', val: parseInt(s.Zentrallager) || 0 },
+        { name: 'Freiburg',     val: parseInt(s.Freiburg)     || 0 },
+        { name: 'Hamburg',      val: parseInt(s.Hamburg)      || 0 },
+      ];
+      const extraLocs = [];
 
-    // Try continuous autofocus (works on Android, silently fails on iOS)
-    try{await torchTrack.applyConstraints({advanced:[{focusMode:'continuous'},{exposureMode:'continuous'}]});}catch(e){}
+      const vStatusRaw = (s.Status || '').trim();
+      const vIsActive  = vStatusRaw.toUpperCase() === 'JA';
+      const vLocStk   = currentLocation ? (parseInt(s[currentLocation]) || 0) : stk;
+      const vLocLabel = currentLocation || 'Gesamt';
+      const vLocScs   = vLocStk === 0 ? 's0' : vLocStk <= 1 ? 'slow' : 'sok';
+      return `<details class="variant-details" open>
+        <summary class="variant-summary">
+          <span class="variant-summary-left">
+            <span class="variant-name">${escHtml(s.NAME)}</span>
+            <span style="display:inline-flex;gap:4px;margin-top:2px;flex-wrap:wrap">
+              <span class="badge ${vIsActive ? 'badge-active' : 'badge-inactive'}" style="font-size:10px;padding:1px 7px">${vIsActive ? 'Aktiv' : 'Inaktiv'}</span>
+              ${isRp ? '<span class="badge badge-outlet" style="font-size:10px;padding:1px 7px">Restposten</span>' : ''}
+              ${getAktion(s) ? `<span class="aktion-chip"><i class="ti ti-bolt" style="font-size:10px"></i> Aktion</span>` : ''}
+            </span>
+          </span>
+          <div style="text-align:right;flex-shrink:0">
+            <span class="variant-stock ${vLocScs}">${vLocStk} Stk.</span>
+            ${currentLocation ? `<div style="font-size:10px;color:var(--text3);margin-top:1px">${vLocLabel}</div>` : ''}
+          </div>
+          <i class="ti ti-chevron-down variant-chevron" aria-hidden="true"></i>
+        </summary>
+        <div class="variant-body">
+          <div class="variant-top-row">
+            ${imgUrl ? `<a href="${escHtml(url)}" target="_blank" class="variant-img-link">
+              <img src="${escHtml(imgUrl)}" alt="Produktbild"
+                onerror="this.style.display='none'">
+            </a>` : ''}
+            <div class="variant-info">
+              <div style="display:flex;align-items:center;gap:4px">
+                <a href="${escHtml(url)}" target="_blank" class="variant-artikelnr-link">
+                  <i class="ti ti-external-link" style="font-size:11px;margin-right:3px" aria-hidden="true"></i>${escHtml(s.ARTIKELNR)}
+                </a>
+                <button class="copy-btn" onclick="copyArticleNr('${s.ARTIKELNR.replace(/'/g,"\'")}', this)" title="Artikelnummer kopieren"><i class="ti ti-copy"></i></button>
+              </div>
+              <div class="variant-price-row">
+                ${preis > 0
+                  ? `<span class="variant-price-main">€ ${preis.toFixed(2).replace('.', ',')}</span>`
+                  : `<span class="variant-price-main" style="font-size:13px;color:var(--text3)">Kein Preis</span>`}
+                ${uvp > preis && preis > 0
+                  ? `<span class="variant-price-uvp">UVP € ${uvp.toFixed(2).replace('.', ',')}</span>` : ''}
+                ${savPct > 0
+                  ? `<span class="variant-price-saving">-${savPct} %</span>` : ''}
+              </div>
+            </div>
+          </div>
+          ${getAktion(s) ? `
+          <div class="aktion-banner" style="padding:8px 10px;margin-bottom:0">
+            <i class="ti ti-bolt" style="font-size:16px;color:#E65100;flex-shrink:0"></i>
+            <div class="aktion-banner-text">
+              <div class="aktion-banner-label">Aktionsangebot</div>
+              <div class="aktion-banner-msg">${escHtml(getAktion(s))}</div>
+            </div>
+          </div>` : ''}
+          <div class="variant-stock-mini">
+            ${mainLocs.map(l => `<div class="vsitem ${locHighlight(l.name, 'highlight')}">
+              <div class="vsloc">${l.name}</div>
+              <div class="vsnum ${sc(l.val)}">${l.val}</div>
+            </div>`).join('')}
+          </div>
+          <div class="variant-stock-mini-extra">
+            ${extraLocs.map(l => `<div class="vsitem ${locHighlight(l.name, 'highlight')}">
+              <div class="vsloc">${l.name}</div>
+              <div class="vsnum ${sc(l.val)}">${l.val}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </details>`;
+    };
 
-    // Strategy 1: native BarcodeDetector (Chrome Android, some Safari)
-    if('BarcodeDetector' in window){
-      try{
-        const supported=await BarcodeDetector.getSupportedFormats();
-        const fmts=['ean_13','ean_8','code_128','code_39','upc_a','upc_e'];
-        const available=fmts.filter(f=>supported.includes(f));
-        if(available.length>0){
-          const detector=new BarcodeDetector({formats:available.length>0?available:fmts});
-          document.getElementById('scanner-engine').textContent='BarcodeDetector';
-      scanWithDetector(video,detector);
-          return;
-        }
-      }catch(e){}
-    }
-
-    // Strategy 2: ZXing
-    // Use ZBar WASM (polyfill or native BarcodeDetector)
-    document.getElementById('scanner-engine').textContent='ZBar';
-    scanWithZBar(video);return;
-
-    showError('Scanner-Bibliothek nicht geladen. Seite neu laden.');
-    stopScanner();
-  }catch(e){
-    stopScanner();
-    const msg=String(e);
-    if(msg.includes('NotAllowed')||msg.includes('PermissionDenied'))
-      showError('Kamera-Zugriff verweigert. Bitte in Safari: Einstellungen → Datenschutz → Kamera → erlauben.');
-    else if(msg.includes('NotFound')||msg.includes('DevicesNotFound'))
-      showError('Keine Kamera gefunden.');
-    else
-      showError('Kamera Fehler: '+msg.slice(0,60));
+    let html = '<div class="variants-section"><div class="divider-thin"></div>';
+    html += '<div class="variants-label">Weitere Varianten dieser Artikelgruppe (' + siblings.length + ')</div>';
+    siblings.sort((a,b) => (a.NAME||'').localeCompare(b.NAME||'', 'de')).forEach(s => { html += renderVariant(s); });
+    html += '</div>';
+    return html;
   }
-}
 
-function scanWithDetector(video,detector){
-  const canvas=document.createElement('canvas');
-  const ctx=canvas.getContext('2d',{willReadFrequently:true});
-  let lastScan=0;
-  async function tick(){
-    if(!scanActive)return;
-    const now=performance.now();
-    if(now-lastScan>80&&video.readyState>=2){  // ~12fps scan rate
-      lastScan=now;
-      canvas.width=video.videoWidth;
-      canvas.height=video.videoHeight;
-      ctx.drawImage(video,0,0);
-      try{
-        const codes=await detector.detect(canvas);
-        if(codes.length>0&&scanActive){
-          scanActive=false;
-          flashFeedback();
-          const code=codes.find(c=>c.rawValue)||codes[0];
+  function loadArticle(artikelnr) {
+    const item = findArticle(artikelnr);
+    if (item) {
+      document.getElementById('search-input').value = artikelnr;
+      renderResult(item);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function showError(msg) {
+    document.getElementById('result-area').innerHTML = `
+      <div class="error-card">
+        <i class="ti ti-alert-circle"></i>
+        <span>${escHtml(msg)}</span>
+      </div>`;
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // Manuelle Suche
+  function doSearch() {
+    const q = document.getElementById('search-input').value.trim();
+    if (!q) return;
+    if (!DATA.length) { showError('Daten noch nicht geladen. Bitte warten oder Aktualisieren tippen.'); return; }
+    // Exakte Übereinstimmung → direkt anzeigen
+    const exact = findArticle(q);
+    if (exact) { renderResult(exact); return; }
+    // Sonst Volltextsuche
+    const results = searchArticles(q);
+    if (results.length === 1) renderResult(results[0]);
+    else if (results.length > 1) renderList(results, q);
+    else showError('Kein Artikel gefunden für: ' + q);
+  }
+
+  // Live-Suche
+  function onInput(val) {
+    const q = val.trim();
+    if (!DATA.length) return;
+    if (q.length < 3) return;
+    // Exakt ab 6 Zeichen
+    if (q.length >= 6) {
+      const exact = findArticle(q);
+      if (exact) { renderResult(exact); return; }
+    }
+    // Volltextsuche ab 3 Zeichen
+    if (q.length >= 3) {
+      const results = searchArticles(q);
+      if (results.length === 1) renderResult(results[0]);
+      else if (results.length > 1 && results.length <= 50) renderList(results, q);
+    }
+  }
+
+  // Barcode-Scanner starten
+  async function startScanner() {
+    const vw  = document.getElementById('video-wrapper');
+    const btn = document.getElementById('scan-btn');
+
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+      showError('Kamera benötigt HTTPS. Bitte die App über die GitHub-Pages-URL öffnen (https://…).');
+      return;
+    }
+
+    if (typeof Html5Qrcode === 'undefined') {
+      showError('Scanner-Bibliothek nicht geladen. Bitte Seite neu laden.');
+      return;
+    }
+
+    vw.style.display = 'block';
+    btn.style.display = 'none';
+    scanActive = true;
+
+    try {
+      html5QrCode = new Html5Qrcode('qr-reader');
+
+      const config = {
+        fps: 15,
+        qrbox: { width: 280, height: 140 },
+        aspectRatio: 1.7,
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E,
+        ]
+      };
+
+      await html5QrCode.start(
+        { facingMode: 'environment' },
+        config,
+        (decodedText) => {
+          if (!scanActive) return;
+          scanActive = false;
           stopScanner();
-          handleScanResult(code.rawValue);
-          return;
-        }
-      }catch(e){}
+          document.getElementById('search-input').value = decodedText;
+          const item = findArticle(decodedText);
+          if (item) renderResult(item);
+          else showError('EAN ' + decodedText + ' nicht in der Datenbank gefunden.');
+        },
+        () => { /* Kein Barcode im Frame — ignorieren */ }
+      );
+
+    } catch (e) {
+      stopScanner();
+      console.error('Scanner-Fehler:', e);
+      const msg = String(e);
+      if (msg.includes('NotAllowed') || msg.includes('Permission')) {
+        showError('Kamera-Zugriff verweigert. Bitte in den Browser-Einstellungen die Kamera für diese Seite erlauben.');
+      } else if (msg.includes('NotFound')) {
+        showError('Keine Kamera gefunden.');
+      } else {
+        showError('Kamera konnte nicht gestartet werden. Bitte manuell eingeben.');
+      }
     }
-    scanAnimFrame=requestAnimationFrame(tick);
   }
-  scanAnimFrame=requestAnimationFrame(tick);
-}
 
-async function scanWithZBar(video){
-  const det=await initBarcodeDetector();
-  if(!det){showError('Scanner nicht verfügbar.');stopScanner();return;}
-  const canvas=document.createElement('canvas');
-  const ctx=canvas.getContext('2d',{willReadFrequently:true});
-  let lastScan=0;
-  async function tick(){
-    if(!scanActive)return;
-    const now=performance.now();
-    if(now-lastScan>100&&video.readyState>=2){
-      lastScan=now;
-      canvas.width=video.videoWidth;
-      canvas.height=video.videoHeight;
-      ctx.drawImage(video,0,0);
-      try{
-        const bmp=await createImageBitmap(canvas);
-        const codes=await det.detect(bmp);
-        bmp.close();
-        if(codes&&codes.length>0&&scanActive){
-          scanActive=false;
-          flashFeedback();
-          stopScanner();
-          handleScanResult(codes[0].rawValue);
-          return;
-        }
-      }catch(e){}
+  // Scanner stoppen
+  async function stopScanner() {
+    scanActive = false;
+    if (html5QrCode) {
+      try {
+        if (html5QrCode.isScanning) await html5QrCode.stop();
+        html5QrCode.clear();
+      } catch(e) {}
+      html5QrCode = null;
     }
-    scanAnimFrame=requestAnimationFrame(tick);
+    document.getElementById('video-wrapper').style.display = 'none';
+    document.getElementById('scan-btn').style.display = 'flex';
   }
-  scanAnimFrame=requestAnimationFrame(tick);
-}
 
-function flashFeedback(){
-  const flash=document.createElement('div');
-  flash.className='scanner-result-flash';
-  const overlay=document.getElementById('scanner-overlay');
-  if(overlay)overlay.appendChild(flash);
-  setTimeout(()=>flash.remove(),300);
-  // Vibration feedback if available
-  if(navigator.vibrate)navigator.vibrate(100);
-}
-
-// ─── NATIVE CAMERA CAPTURE (primary scan method) ────────────────────────
-function startNativeCamera(){
-  // Trigger native camera via file input
-  document.getElementById('native-camera-input').click();
-}
-
-async function handleCameraCapture(input){
-  if(!input.files||!input.files[0])return;
-  const file=input.files[0];
-  // Reset for next scan
-  input.value='';
-
-  // Show preview
-  const wrap=document.getElementById('capture-preview-wrap');
-  const preview=document.getElementById('capture-preview');
-  const status=document.getElementById('capture-status');
-  const url=URL.createObjectURL(file);
-  preview.src=url;
-  wrap.style.display='block';
-  status.innerHTML='<i class="ti ti-loader spinning"></i> Barcode wird erkannt…';
-
-  try{
-    const code=await decodeFromImage(file);
-    URL.revokeObjectURL(url);
-    if(code){
-      status.innerHTML='<i class="ti ti-check" style="color:var(--green-text)"></i> Barcode erkannt: '+escHtml(code);
-      setTimeout(()=>{wrap.style.display='none';},1500);
-      if(navigator.vibrate)navigator.vibrate(100);
-      handleScanResult(code);
-    }else{
-      status.innerHTML='<i class="ti ti-alert-circle" style="color:var(--amber-text)"></i> Kein Barcode gefunden — nochmal versuchen';
-      setTimeout(()=>{wrap.style.display='none';},2500);
+  // Artikelnummer kopieren — robust für iOS Safari + Android Chrome
+  function copyArticleNr(nr, btn) {
+    function showSuccess() {
+      btn.classList.add('copied');
+      btn.innerHTML = '<i class="ti ti-check"></i>';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = '<i class="ti ti-copy"></i>';
+      }, 1500);
     }
-  }catch(e){
-    URL.revokeObjectURL(url);
-    status.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red-text)"></i> Fehler: '+escHtml(String(e).slice(0,50));
-    setTimeout(()=>{wrap.style.display='none';},2500);
-  }
-}
 
-// Initialize BarcodeDetector with ZBar polyfill if native not available
-let barcodeDetector=null;
-async function initBarcodeDetector(){
-  if(barcodeDetector)return barcodeDetector;
-  const formats=['ean_13','ean_8','code_128','code_39','upc_a','upc_e'];
-  if('BarcodeDetector' in window){
-    try{
-      barcodeDetector=new BarcodeDetector({formats});
-      return barcodeDetector;
-    }catch(e){}
-  }
-  // Use ZBar WASM polyfill
-  if(typeof BarcodeDetectorPolyfill!=='undefined'){
-    await BarcodeDetectorPolyfill.init();
-    barcodeDetector=new BarcodeDetectorPolyfill({formats});
-    return barcodeDetector;
-  }
-  return null;
-}
-
-async function decodeFromImage(file){
-  const img=await loadImage(file);
-  const result=await tryAllStrategies(img);
-  return result;
-}
-
-function loadImage(file){
-  return new Promise((resolve,reject)=>{
-    const img=new Image();
-    const url=URL.createObjectURL(file);
-    img.onload=()=>{URL.revokeObjectURL(url);resolve(img);};
-    img.onerror=()=>reject(new Error('Bild konnte nicht geladen werden'));
-    img.src=url;
-  });
-}
-
-function prepareCanvas(img,scale=1,contrast=1,rotation=0){
-  const canvas=document.createElement('canvas');
-  const ctx=canvas.getContext('2d');
-  const w=Math.round(img.naturalWidth*scale);
-  const h=Math.round(img.naturalHeight*scale);
-  if(rotation===0||rotation===180){canvas.width=w;canvas.height=h;}
-  else{canvas.width=h;canvas.height=w;}
-  ctx.save();
-  ctx.translate(canvas.width/2,canvas.height/2);
-  ctx.rotate(rotation*Math.PI/180);
-  ctx.drawImage(img,-w/2,-h/2,w,h);
-  ctx.restore();
-  // Apply contrast enhancement
-  if(contrast!==1){
-    const id=ctx.getImageData(0,0,canvas.width,canvas.height);
-    const d=id.data;
-    const factor=(259*(contrast*255+255))/(255*(259-contrast*255));
-    for(let i=0;i<d.length;i+=4){
-      d[i]=Math.min(255,Math.max(0,factor*(d[i]-128)+128));
-      d[i+1]=Math.min(255,Math.max(0,factor*(d[i+1]-128)+128));
-      d[i+2]=Math.min(255,Math.max(0,factor*(d[i+2]-128)+128));
+    // Methode 1: moderne Clipboard API (Chrome, Firefox, neuere Safari)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(nr).then(showSuccess).catch(() => fallbackCopy(nr, btn, showSuccess));
+    } else {
+      fallbackCopy(nr, btn, showSuccess);
     }
-    ctx.putImageData(id,0,0);
   }
-  return canvas;
-}
 
-async function decodeCanvas(canvas){
-  const det=await initBarcodeDetector();
-  if(!det)return null;
-  try{
-    const bmp=await createImageBitmap(canvas);
-    const codes=await det.detect(bmp);
-    bmp.close();
-    if(codes&&codes.length>0)return codes[0].rawValue;
-  }catch(e){}
-  return null;
-}
-
-async function detectFromBitmap(bitmap){
-  const det=await initBarcodeDetector();
-  if(!det)return null;
-  try{
-    const codes=await det.detect(bitmap);
-    return codes&&codes.length>0?codes[0].rawValue:null;
-  }catch(e){return null;}
-}
-
-async function tryAllStrategies(img){
-  // Strategy matrix: [scale, contrast, rotation]
-  const strategies=[
-    [1,   1,    0],   // original
-    [1,   1.5,  0],   // more contrast
-    [1,   2,    0],   // high contrast
-    [0.5, 1,    0],   // half size (faster decode)
-    [0.5, 1.5,  0],   // half size + contrast
-    [1,   1,    90],  // rotated 90°
-    [1,   1,    270], // rotated 270°
-    [1,   2.5,  0],   // very high contrast
-    [1.5, 1,    0],   // larger (sharper small barcodes)
-    [1.5, 1.5,  0],   // larger + contrast
-    [0.5, 2,    0],   // half + high contrast
-    [1,   1,    180], // upside down
-  ];
-
-  for(const [scale,contrast,rotation] of strategies){
-    const canvas=prepareCanvas(img,scale,contrast,rotation);
-    // Try BarcodeDetector first on each canvas
-    try{
-      const bmp=await createImageBitmap(canvas);
-      const r=await detectFromBitmap(bmp);
-      bmp.close();
-      if(r){console.log(`Found with BarcodeDetector scale=${scale} contrast=${contrast} rot=${rotation}`);return r;}
-    }catch(e){}
-    // Then try ZXing
-    const r2=await decodeCanvas(canvas);
-    if(r2){console.log(`Found with ZXing scale=${scale} contrast=${contrast} rot=${rotation}`);return r2;}
+  function fallbackCopy(nr, btn, onSuccess) {
+    // Methode 2: input-Element mit execCommand — funktioniert auf iOS Safari
+    const input = document.createElement('input');
+    input.setAttribute('type', 'text');
+    input.setAttribute('value', nr);
+    input.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0';
+    document.body.appendChild(input);
+    input.focus();
+    input.select();
+    // iOS braucht setSelectionRange
+    input.setSelectionRange(0, input.value.length);
+    try {
+      document.execCommand('copy');
+      onSuccess();
+    } catch(e) {
+      // Letzter Ausweg: Prompt anzeigen
+      window.prompt('Artikelnummer kopieren (Strg+C / Cmd+C):', nr);
+    }
+    document.body.removeChild(input);
   }
-  return null;
-}
 
-function handleScanResult(rawCode){
-  let code=rawCode.trim();
-  // UPC-A (12 digits) → try both with and without leading zero
-  // EAN-13 starting with 0 may be returned as 12-digit UPC-A
-  let item=findArticle(code);
-  if(!item && code.length===12){
-    // Try with leading zero (UPC-A → EAN-13)
-    item=findArticle('0'+code);
-    if(item)code='0'+code;
+  // ─── STANDORT-LOGIK ──────────────────────────────────────────────────────
+  const LOCATIONS = ['Coppi','Steglitz','Zentrallager','Freiburg','Hamburg'];
+  let currentLocation = '';
+  let pendingLocation = '';
+
+  function initLocation() {
+    const saved = localStorage.getItem('atl_location');
+    if (saved !== null) {
+      currentLocation = saved;
+      updateLocationBar();
+    } else {
+      // Erster Start: Modal anzeigen
+      setTimeout(() => document.getElementById('location-modal').classList.remove('hidden'), 800);
+    }
   }
-  if(!item && code.length===13 && code.startsWith('0')){
-    // Try without leading zero
-    item=findArticle(code.slice(1));
-    if(item)code=code.slice(1);
+
+  function updateLocationBar() {
+    // Update location label in top bar
+    const label = document.getElementById('location-label');
+    if (label) label.textContent = currentLocation || 'Standort';
+    const locMeta = document.getElementById('loc-meta');
+    if (locMeta) locMeta.style.display = 'flex';
+    updateAktionenBanner();
   }
-  document.getElementById('search-input').value=code;
-  if(item)renderResult(item);
-  else showError('EAN '+code+' nicht in der Datenbank gefunden.');
-}
 
-async function stopScanner(){
-  scanActive=false;
-  document.body.style.overflow='';
-  // Cancel animation frame (BarcodeDetector loop)
-  if(scanAnimFrame){cancelAnimationFrame(scanAnimFrame);scanAnimFrame=null;}
-  // Stop ZXing
-  if(window._zxingReader){try{window._zxingReader.reset();}catch(e){}window._zxingReader=null;}
-  // Stop html5-qrcode
-  if(html5QrCode){try{if(html5QrCode.isScanning)await html5QrCode.stop();html5QrCode.clear();}catch(e){}html5QrCode=null;}
-  // Stop camera stream
-  const video=document.getElementById('scanner-video');
-  if(video&&video.srcObject){video.srcObject.getTracks().forEach(t=>t.stop());video.srcObject=null;}
-  torchTrack=null;
-  document.getElementById('scanner-overlay').classList.remove('active');
-  const tb=document.getElementById('torch-btn');
-  if(tb)tb.classList.remove('torch-on');
-}
-
-async function toggleTorch(btn){
-  if(!torchTrack)return;
-  const isTorchOn=btn.classList.contains('torch-on');
-  try{
-    await torchTrack.applyConstraints({advanced:[{torch:!isTorchOn}]});
-    btn.classList.toggle('torch-on');
-  }catch(e){
-    // Torch not supported on this device
-    btn.style.opacity='0.4';
-    btn.disabled=true;
+  function updateAktionenBanner() {
+    const banner = document.getElementById('aktionen-banner');
+    const sub    = document.getElementById('aktionen-banner-sub');
+    // Banner für alle Standorte anzeigen (wenn Standort gewählt)
+    if (currentLocation === 'Coppi' && DATA.length > 0) {
+      const aktionen = DATA.filter(r => getAktion(r));
+      if (aktionen.length > 0) {
+        banner.style.display = 'inline-flex';
+        sub.textContent = aktionen.length + ' Artikel mit Sonderpreisen';
+      } else {
+        banner.style.display = 'none';
+      }
+    } else {
+      banner.style.display = 'none';
+    }
   }
-}
 
-function copyArticleNr(nr,btn){
-  function ok(){btn.classList.add('copied');btn.innerHTML='<i class="ti ti-check"></i>';setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='<i class="ti ti-copy"></i>';},1500);}
-  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(nr).then(ok).catch(()=>fallbackCopy(nr,btn,ok));
-  else fallbackCopy(nr,btn,ok);
-}
-function fallbackCopy(nr,btn,onSuccess){
-  const inp=document.createElement('input');inp.value=nr;
-  inp.style.cssText='position:fixed;top:0;left:0;width:2em;height:2em;opacity:0';
-  document.body.appendChild(inp);inp.focus();inp.select();inp.setSelectionRange(0,nr.length);
-  try{document.execCommand('copy');onSuccess();}catch(e){window.prompt('Kopieren:',nr);}
-  document.body.removeChild(inp);
-}
+  function openAktionenModal() {
+    const aktionen = DATA.filter(r => getAktion(r))
+      .sort((a,b) => (a.NAME||'').localeCompare(b.NAME||'', 'de'));
+    const STOCK_KEYS = ['Coppi','Steglitz','Zentrallager','Freiburg','Hamburg'];
+    const sc = n => n === 0 ? 's0' : n <= 1 ? 'slow' : 'sok';
 
-let currentLocation='',pendingLocation='';
+    const html = aktionen.map(item => {
+      const locStk   = currentLocation ? (parseInt(item[currentLocation]) || 0) : STOCK_KEYS.reduce((s,k)=>s+(parseInt(item[k])||0),0);
+      const locLabel = currentLocation || 'Gesamt';
+      const img      = (item.BILD_URL || '').trim();
+      const hasImg   = img && img !== 'default.jpg';
+      return `<button class="aktion-list-item" onclick="selectFromAktionen('${item.ARTIKELNR.replace(/'/g,"\'")}')">
+        <div class="aktion-list-img">
+          ${hasImg
+            ? `<img src="https://www.atlantiscloud.de/images/products/mini/${img}" alt="" onerror="this.style.display='none'">`
+            : '<i class="ti ti-photo-off" style="font-size:20px;color:var(--text3);opacity:0.4"></i>'}
+        </div>
+        <div class="aktion-list-info">
+          <div class="aktion-list-name">${escHtml(item.NAME || item.ARTIKELNR)}</div>
+          <div class="aktion-list-nr">${escHtml(item.ARTIKELNR)}</div>
+          <div class="aktion-list-tag"><i class="ti ti-bolt" style="font-size:10px"></i> ${escHtml(getAktion(item))}</div>
+        </div>
+        <div class="aktion-list-stock">
+          <div class="aktion-list-stk ${sc(locStk)}">${locStk} Stk.</div>
+          <div class="aktion-list-loc">${locLabel}</div>
+        </div>
+      </button>`;
+    }).join('');
 
-function initLocation(){
-  const saved=localStorage.getItem('atl_location');
-  if(saved!==null){currentLocation=saved;updateLocationBar();}
-  else{setTimeout(()=>document.getElementById('location-modal').classList.remove('hidden'),800);}
-}
-
-function updateLocationBar(){
-  renderSettings();
-  const bar=document.getElementById('location-bar');
-  const label=document.getElementById('location-label');
-  bar.style.display='flex';
-  label.textContent=currentLocation?'Mein Standort: '+currentLocation:'Alle Standorte';
-  updateAktionenBanner();
-}
-
-function updateAktionenBanner(){
-  const banner=document.getElementById('aktionen-banner');
-  const sub=document.getElementById('aktionen-banner-sub');
-  if(currentLocation==='Coppi'&&DATA.length>0){
-    const aktionen=DATA.filter(r=>getAktion(r));
-    if(aktionen.length>0){banner.style.display='flex';sub.textContent=aktionen.length+' Artikel mit Sonderpreisen';}
-    else banner.style.display='none';
-  }else{banner.style.display='none';}
-}
-
-function openAktionenModal(){
-  const aktionen=DATA.filter(r=>getAktion(r)).sort((a,b)=>(a.NAME||'').localeCompare(b.NAME||'','de'));
-  const STOCK_KEYS=['Coppi','Steglitz','Zentrallager','Freiburg','Hamburg'];
-  const sc=n=>n===0?'s0':n<=1?'slow':'sok';
-  const html=aktionen.map(item=>{
-    const locStk=currentLocation?(parseInt(item[currentLocation])||0):STOCK_KEYS.reduce((s,k)=>s+(parseInt(item[k])||0),0);
-    const img=(item.BILD_URL||'').trim();const hasImg=img&&img!=='default.jpg';
-    return `<button class="aktion-list-item" onclick="selectFromAktionen('${item.ARTIKELNR.replace(/'/g,"\\'")}')">
-      <div class="aktion-list-img">${hasImg?`<img src="https://www.atlantiscloud.de/images/products/mini/${img}" alt="" onerror="this.style.display='none'">` :'<i class="ti ti-photo-off" style="font-size:20px;color:var(--text3);opacity:0.4"></i>'}</div>
-      <div class="aktion-list-info">
-        <div class="aktion-list-name">${escHtml(item.NAME||item.ARTIKELNR)}</div>
-        <div class="aktion-list-nr">${escHtml(item.ARTIKELNR)}</div>
-        <div class="aktion-list-tag"><i class="ti ti-bolt" style="font-size:10px"></i> ${escHtml(getAktion(item))}</div>
-      </div>
-      <div class="aktion-list-stock">
-        <div class="aktion-list-stk ${sc(locStk)}">${locStk} Stk.</div>
-        <div class="aktion-list-loc">${currentLocation||'Gesamt'}</div>
-      </div>
-    </button>`;
-  }).join('');
-  document.getElementById('aktionen-list').innerHTML=html||'<p style="text-align:center;color:var(--text3);padding:32px">Keine Aktionsangebote gefunden</p>';
-  document.getElementById('aktionen-modal').classList.remove('hidden');
-}
-
-function selectFromAktionen(artikelnr){
-  document.getElementById('aktionen-modal').classList.add('hidden');
-  const item=findArticle(artikelnr);
-  if(item){document.getElementById('search-input').value=artikelnr;renderResult(item);window.scrollTo({top:0,behavior:'smooth'});}
-}
-
-function selectLoc(btn){
-  document.querySelectorAll('.location-opt').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');pendingLocation=btn.dataset.loc;
-}
-
-function saveLocation(){
-  currentLocation=pendingLocation;
-  localStorage.setItem('atl_location',currentLocation);
-  document.getElementById('location-modal').classList.add('hidden');
-  updateLocationBar();
-  const q=document.getElementById('search-input').value.trim();
-  if(q){const item=findArticle(q);if(item)renderResult(item);}
-}
-
-function locHighlight(name,cssClass){return(!currentLocation||currentLocation!==name)?'':cssClass;}
-function showError(msg){document.getElementById('result-area').innerHTML=`<div class="error-card"><i class="ti ti-alert-circle"></i><span>${escHtml(msg)}</span></div>`;}
-function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-// ─── SCAN HISTORY ─────────────────────────────────────────────────────────
-let scanHistory=JSON.parse(localStorage.getItem('atl_scan_history')||'[]');
-
-function addToHistory(item){
-  scanHistory=scanHistory.filter(h=>h.nr!==item.ARTIKELNR);
-  scanHistory.unshift({nr:item.ARTIKELNR,name:item.NAME||item.ARTIKELNR,img:(item.BILD_URL||'').trim(),time:Date.now()});
-  if(scanHistory.length>50)scanHistory=scanHistory.slice(0,50);
-  localStorage.setItem('atl_scan_history',JSON.stringify(scanHistory));
-  refreshHistoryBadge();
-}
-
-function renderHistory(){
-  const el=document.getElementById('history-content');
-  if(!scanHistory.length){
-    el.innerHTML='<div class="history-empty"><i class="ti ti-history"></i><p>Noch keine Artikel gescannt</p></div>';
-    return;
+    document.getElementById('aktionen-list').innerHTML = html || '<p style="text-align:center;color:var(--text3);padding:32px">Keine Aktionsangebote gefunden</p>';
+    document.getElementById('aktionen-modal').classList.remove('hidden');
   }
-  el.innerHTML=scanHistory.map(h=>{
-    const img=h.img&&h.img!=='default.jpg'?`https://www.atlantiscloud.de/images/products/mini/${h.img}`:'';
-    return `<div class="history-item" onclick="loadFromHistory('${h.nr.replace(/'/g,"\'")}')">
-      <div class="history-img">${img?`<img src="${img}" alt="" onerror="this.style.display='none'">`:'<i class="ti ti-photo-off" style="font-size:18px;color:var(--text3);opacity:0.4"></i>'}</div>
-      <div class="history-info">
-        <div class="history-name">${escHtml(h.name)}</div>
-        <div class="history-nr">${escHtml(h.nr)}</div>
-      </div>
-      <div class="history-meta">${timeAgo(h.time)}</div>
-    </div>`;
-  }).join('');
-}
 
-function loadFromHistory(nr){
-  switchTab('scan');
-  const item=findArticle(nr);
-  if(item){document.getElementById('search-input').value=nr;renderResult(item);window.scrollTo({top:0,behavior:'smooth'});}
-}
+  function selectFromAktionen(artikelnr) {
+    document.getElementById('aktionen-modal').classList.add('hidden');
+    const item = findArticle(artikelnr);
+    if (item) {
+      document.getElementById('search-input').value = artikelnr;
+      renderResult(item);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
 
-function clearHistory(){
-  if(!confirm('Verlauf wirklich löschen?'))return;
-  scanHistory=[];localStorage.removeItem('atl_scan_history');
-  renderHistory();refreshHistoryBadge();renderSettings();
-}
+  function selectLoc(btn) {
+    document.querySelectorAll('.location-opt').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    pendingLocation = btn.dataset.loc;
+  }
 
-function timeAgo(ts){
-  const d=Math.floor((Date.now()-ts)/1000);
-  if(d<60)return'Gerade eben';
-  if(d<3600)return Math.floor(d/60)+' Min.';
-  if(d<86400)return Math.floor(d/3600)+' Std.';
-  return Math.floor(d/86400)+' Tage';
-}
+  function saveLocation() {
+    currentLocation = pendingLocation;
+    localStorage.setItem('atl_location', currentLocation);
+    document.getElementById('location-modal').classList.add('hidden');
+    updateLocationBar();
+    // Aktuell angezeigten Artikel neu rendern falls vorhanden
+    const q = document.getElementById('search-input').value.trim();
+    if (q) {
+      const item = findArticle(q);
+      if (item) renderResult(item);
+    }
+  }
 
-function refreshHistoryBadge(){
-  const el=document.getElementById('settings-history-count');
-  if(el)el.textContent=scanHistory.length;
-}
+  // Highlight-Klasse für Standort-Kacheln
+  function locHighlight(name, cssClass) {
+    if (!currentLocation) return '';
+    return currentLocation === name ? cssClass : '';
+  }
 
-// ─── SETTINGS ─────────────────────────────────────────────────────────────
-let lastLoadTime='';
-
-function renderSettings(){
-  const locEl=document.getElementById('settings-loc');
-  if(locEl)locEl.innerHTML=(currentLocation||'Nicht gewählt')+' <i class="ti ti-chevron-right" style="font-size:13px"></i>';
-  const cntEl=document.getElementById('settings-count');
-  if(cntEl)cntEl.textContent=DATA.length?DATA.length+' Artikel':'—';
-  const timeEl=document.getElementById('settings-time');
-  if(timeEl)timeEl.textContent=lastLoadTime||'—';
-  refreshHistoryBadge();
-}
-
-// ─── TAB NAVIGATION ───────────────────────────────────────────────────────
-function switchTab(tab){
-  ['scan','history','settings'].forEach(t=>{
-    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
-    document.getElementById('pane-'+t).classList.toggle('active',t===tab);
-  });
-  if(tab==='history')renderHistory();
-  if(tab==='settings')renderSettings();
-}
-
-loadData();
-initLocation();
-initBarcodeDetector().then(d=>console.log('BarcodeDetector ready:',d?'yes':'no'));
+  // Beim Laden sofort Daten holen
+  loadData();
+  initLocation();
 </script>
 </body>
 </html>
