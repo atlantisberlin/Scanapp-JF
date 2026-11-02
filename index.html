@@ -1305,6 +1305,66 @@
     return currentLocation === name ? cssClass : '';
   }
 
+  // ─── BLUETOOTH / USB HID BARCODE SCANNER SUPPORT ───────────────────────────
+  // HID-Scanner tippen Zeichen sehr schnell hintereinander (< 50ms pro Zeichen)
+  // und senden am Ende meist Enter. Wir fangen das global ab.
+  (function() {
+    let scanBuffer = '';
+    let scanTimer  = null;
+    const SCAN_SPEED_MS = 50;   // max. Pause zwischen Zeichen eines Scans
+    const MIN_SCAN_LEN  = 4;    // minimale Barcode-Länge
+
+    function flushScanBuffer() {
+      const code = scanBuffer.trim();
+      scanBuffer = '';
+      scanTimer  = null;
+      if (code.length < MIN_SCAN_LEN) return;
+      // Ins Suchfeld übernehmen und Suche starten
+      const input = document.getElementById('search-input');
+      input.value = code;
+      const item = findArticle(code);
+      if (item) { renderResult(item); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      else {
+        const results = searchArticles(code);
+        if (results.length === 1)       renderResult(results[0]);
+        else if (results.length > 1)    renderList(results, code);
+        else showError('Kein Artikel gefunden für: ' + code);
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      // Nur wenn kein Eingabefeld (außer unserem) den Fokus hat
+      const active = document.activeElement;
+      const inOtherInput = active &&
+        (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') &&
+        active.id !== 'search-input';
+      if (inOtherInput) return;
+
+      // Enter = Scan abgeschlossen
+      if (e.key === 'Enter') {
+        if (scanTimer) { clearTimeout(scanTimer); }
+        if (scanBuffer.length >= MIN_SCAN_LEN) {
+          flushScanBuffer();
+        } else if (active && active.id === 'search-input') {
+          doSearch(); // normaler Enter im Suchfeld
+        }
+        return;
+      }
+
+      // Druckbare Zeichen sammeln
+      if (e.key.length === 1) {
+        // Ersten Buchstaben: Zeitmessung starten
+        if (scanTimer) clearTimeout(scanTimer);
+        scanBuffer += e.key;
+        scanTimer = setTimeout(function() {
+          // Timeout abgelaufen ohne Enter → kein Scanner, Buffer verwerfen
+          scanBuffer = '';
+          scanTimer  = null;
+        }, SCAN_SPEED_MS * 10); // nach 10-facher Pause aufgeben
+      }
+    }, true); // capture phase, damit wir vor anderen Handlern sind
+  })();
+
   // Beim Laden sofort Daten holen
   loadData();
   initLocation();
